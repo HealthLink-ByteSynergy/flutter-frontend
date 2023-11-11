@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/custom_form.dart';
+import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/widgets/custom_text_field.dart';
 
@@ -97,13 +98,15 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                 dropdownColor: color2,
                 value: customForm.getGender,
                 hint: Text('Select Gender',
-                    style: GoogleFonts.raleway(color: color4)),
+                    style: GoogleFonts.raleway(
+                        color: color4, fontWeight: FontWeight.bold)),
                 items: ['Male', 'Female', 'Other'].map((String gender) {
                   return DropdownMenuItem<String>(
                     value: gender,
                     child: Text(
                       gender,
-                      style: TextStyle(color: color4),
+                      style: GoogleFonts.raleway(
+                          color: color4, fontWeight: FontWeight.bold),
                     ),
                   );
                 }).toList(),
@@ -118,8 +121,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                     borderSide: BorderSide(
-                      color:
-                          Colors.white.withOpacity(0.3), // Set the border color
+                      color: collaborateAppBarBgColor, // Set the border color
                       width: 0, // Set the border width
                     ), // Set rounded corners
                   ),
@@ -518,7 +520,13 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: orange),
-                    onPressed: () {}, // Submit button
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(),
+                        ),
+                      );
+                    }, // Submit button
                     child: Text('Submit',
                         style: GoogleFonts.raleway(
                             color: blackColor,
