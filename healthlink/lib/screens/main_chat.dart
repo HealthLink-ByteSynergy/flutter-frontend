@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/models/summary.dart';
+import 'package:healthlink/screens/drawer_header.dart';
 import 'package:healthlink/utils/colors.dart';
+import 'package:healthlink/widgets/summary_list.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -21,13 +24,17 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         backgroundColor: collaborateAppBarBgColor,
         title: Text('HealthLink'),
-        leading: IconButton(
-          icon: Icon(Icons.menu), // Stylish looking icon for sidebar
-          onPressed: () {
-            // Handle sidebar button pressed
-          },
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu), // Icon that opens the drawer
+            onPressed: () {
+              // Open the drawer
+              Scaffold.of(context).openDrawer();
+            },
+          ),
         ),
       ),
+      drawer: _buildDrawer(),
       body: Column(
         children: [
           Expanded(
@@ -162,6 +169,155 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: color3,
+      child: Column(
+        children: [
+          DrawerHeader(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Ramsai Koushik Polisetti',
+                    style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  child: Icon(Icons.more_horiz),
+                  onTap: () {},
+                )
+              ],
+            ),
+          ),
+
+          Center(
+            child: Text(
+              'Doctor Consultation Summaries',
+              style: GoogleFonts.raleway(
+                  color: collaborateAppBarBgColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 25),
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          Flexible(
+            child: SummaryListWidget(summaries: getDummySummaries()),
+          )
+          // Add more list items as needed
+        ],
+      ),
+    );
+  }
+
+  List<Summary> getDummySummaries() {
+    return [
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      Summary(
+        summaryId: '1',
+        patientId: '123',
+        doctorId: 'Doctor1',
+        summaryText: 'This is the first summary text.',
+        prescriptionId: 'Prescription1',
+        timestamp: DateTime.now(),
+      ),
+      Summary(
+        summaryId: '2',
+        patientId: '123',
+        doctorId: 'Doctor2',
+        summaryText: 'This is the second summary text.',
+        prescriptionId: 'Prescription2',
+        timestamp: DateTime.now().subtract(Duration(days: 1)),
+      ),
+      // Add more dummy summaries as needed
+    ];
+  }
+
   void _sendMessage(String text) {
     setState(() {
       _isInputEmpty = true;
@@ -178,4 +334,10 @@ class _ChatScreenState extends State<ChatScreen> {
       _buildChatMessage('Bot reply', false, DateTime.now());
     });
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: ChatScreen(),
+  ));
 }
