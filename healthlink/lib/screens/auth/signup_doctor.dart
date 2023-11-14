@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';
+import 'package:healthlink/utils/multi_select.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+class DoctorSignupScreen extends StatefulWidget {
+  const DoctorSignupScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<DoctorSignupScreen> createState() => _DoctorSignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _licenseController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  List specializations = [];
+  List _selectedspecializations = [];
   bool isObscured = true;
   bool _isLoading = false;
 
@@ -22,6 +28,8 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _licenseController.dispose();
+    _usernameController.dispose();
   }
 
   void signUp() async {
@@ -75,14 +83,16 @@ class _SignupScreenState extends State<SignupScreen> {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Container(
+          constraints: BoxConstraints(
+            minHeight: height, // Set your minimum height here
+          ),
           color: collaborateAppBarBgColor,
           padding: const EdgeInsets.symmetric(horizontal: 32),
           width: double.infinity,
-          height: MediaQuery.of(context).size.height,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: height * 0.3),
+              SizedBox(height: height * 0.2),
               Text('HealthLink',
                   style: GoogleFonts.raleway(
                     fontSize: width * 0.12,
@@ -91,6 +101,32 @@ class _SignupScreenState extends State<SignupScreen> {
                   )),
               SizedBox(
                 height: height * 0.1,
+              ),
+              TextField(
+                controller: _usernameController,
+                autocorrect: true,
+                cursorColor: color4,
+                maxLength: 18,
+                style: const TextStyle(color: color4),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.person_2_outlined,
+                    color: color4,
+                  ),
+                  labelText: 'Your username',
+                  labelStyle: const TextStyle(color: color4),
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.white.withOpacity(0.3),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide:
+                          const BorderSide(width: 0, style: BorderStyle.none)),
+                ),
+                keyboardType: TextInputType.text,
+              ),
+              SizedBox(
+                height: height * 0.011,
               ),
               TextField(
                 controller: _emailController,
@@ -154,10 +190,106 @@ class _SignupScreenState extends State<SignupScreen> {
                 keyboardType: TextInputType.visiblePassword,
               ),
               SizedBox(
-                height: height * 0.075,
+                height: height * 0.025,
+              ),
+              TextField(
+                controller: _licenseController,
+                autocorrect: false,
+                cursorColor: color4,
+                style: TextStyle(color: color4),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.numbers,
+                    color: color4,
+                  ),
+                  // suffixIcon: IconButton(
+                  //   icon: Icon(
+                  //     isObscured ? Icons.visibility_off : Icons.visibility,
+                  //     color: color4,
+                  //   ),
+                  //   onPressed: () {
+                  //     setState(() {
+                  //       isObscured = !isObscured;
+                  //     });
+                  //   },
+                  // ),
+                  labelText: 'Your Medical License Number',
+                  labelStyle: TextStyle(color: color4),
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.white.withOpacity(0.3),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide:
+                        const BorderSide(width: 0, style: BorderStyle.none),
+                  ),
+                ),
+                keyboardType: TextInputType.visiblePassword,
+              ),
+              SizedBox(
+                height: height * 0.025,
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _showMultiSelect([
+                            'Web Dev',
+                            'App Dev',
+                            'Machine Learning',
+                            'DevOps',
+                            'BlockChain',
+                            'CyberSecurity'
+                          ]);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: color3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'Choose your specializations',
+                          style: GoogleFonts.raleway(
+                              color: collaborateAppBarBgColor,
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        shrinkWrap: true,
+                        itemCount: specializations.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                              padding: EdgeInsets.all(8.0),
+                              alignment: Alignment.center,
+                              child: Text(
+                                specializations[index],
+                                style: GoogleFonts.raleway(
+                                    color: color4,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21),
+                              ));
+                        },
+                      ),
+                    ]),
+              ),
+              SizedBox(
+                height: height * 0.025,
               ),
               InkWell(
-                onTap: signUp,
+                // onTap: signUp,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => HomeBody(jwtToken: 'ji'),
+                  ),
+                ),
                 child: Container(
                   height: height * 0.065,
                   width: double.infinity,
@@ -181,7 +313,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               SizedBox(
-                height: height * 0.025,
+                height: height * 0.01,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -190,12 +322,15 @@ class _SignupScreenState extends State<SignupScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: const Text(
                       'Already have an account?',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, color: color4),
+                      style: TextStyle(color: color4),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: const Text(
@@ -212,5 +347,24 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
     );
+  }
+
+  void _showMultiSelect(items) async {
+    final List? results = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelect(
+          items: items,
+          selectedItems: _selectedspecializations,
+        );
+      },
+    );
+    // Update UI
+    if (results != null) {
+      setState(() {
+        specializations = results;
+        _selectedspecializations = specializations;
+      });
+    }
   }
 }

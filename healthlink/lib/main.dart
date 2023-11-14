@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return HomeBody(jwtToken: 'ji');
+    return LoginScreen();
     // return FutureBuilder(
     //   future: AuthMethods.fetchToken(),
     //   builder: (context, snapshot) {

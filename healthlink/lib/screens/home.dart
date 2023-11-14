@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:healthlink/models/custom_form.dart';
+import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/form.dart';
 import 'package:healthlink/screens/auth/login.dart';
 import 'package:healthlink/utils/colors.dart';
@@ -134,23 +134,25 @@ class _HomeBodyState extends State<HomeBody> {
               ),
             )
           : Padding(
-              padding: const EdgeInsets.only(
-                  top: 10.0,
-                  left: 2.0,
-                  right: 2.0), // Adjust padding for the rectangles
-              child: GridView.builder(
-                // shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Two rectangles in a row
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 4.0,
-                ),
+              padding: const EdgeInsets.only(top: 10.0, left: 2.0, right: 2.0),
+              child: ListView.builder(
                 itemCount: chatList.length,
                 itemBuilder: (context, index) {
-                  return ChatBox(chatInfo: chatList[index]);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      title: Text(chatList[index].patientName),
+                      subtitle: Text(chatList[index].reason),
+                      // Add other ListTile properties based on your ChatBox content
+                      onTap: () {
+                        // Handle item tap if needed
+                      },
+                    ),
+                  );
                 },
               ),
             ),
+
       floatingActionButton: chatList.isEmpty
           ? null // If chatList is empty, no FAB
           : Container(

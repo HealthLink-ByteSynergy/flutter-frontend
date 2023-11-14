@@ -3,9 +3,10 @@ import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods c
 // import 'package:healthlink/screens/auth/reset_password.dart';
 // import 'package:healthlink/screens/auth/signup_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/screens/auth/role_signup.dart';
 import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/screens/auth/reset_password.dart';
-import 'package:healthlink/screens/auth/signup.dart';
+import 'package:healthlink/screens/auth/signup_patient.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -156,8 +157,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 30,
               ),
               InkWell(
-                onTap:
-                    _loginUser, // Call the _loginUser method when the user taps the login button
+                // onTap:
+                //     _loginUser,
+                // Call the _loginUser method when the user taps the login button
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => HomeBody(jwtToken: 'ji'),
+                  ),
+                ),
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -197,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const SignupScreen(),
+                        builder: (context) => Role(),
                       ),
                     ),
                     child: Container(
