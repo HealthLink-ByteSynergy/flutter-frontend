@@ -3,6 +3,7 @@
 class CustomForm {
   String? name;
   int? age;
+  String? number;
   String? gender;
   double? height;
   double? weight;
@@ -28,6 +29,10 @@ class CustomForm {
   get getAge => this.age;
 
   set setAge(age) => this.age = age;
+
+  String? get getNumber => this.number;
+
+  set setNumber(String? number) => this.number = number;
 
   get getGender => this.gender;
 
@@ -110,6 +115,7 @@ class CustomForm {
   CustomForm() {
     name = null;
     age = null;
+    number = null;
     gender = null;
     height = null;
     weight = null;
@@ -130,6 +136,7 @@ class CustomForm {
   bool? validate() {
     return name != null &&
         age != null &&
+        number != null &&
         gender != null &&
         height != null &&
         weight != null &&
@@ -149,6 +156,7 @@ class CustomForm {
   void reset() {
     name = null;
     age = null;
+    number = null;
     gender = null;
     height = null;
     weight = null;

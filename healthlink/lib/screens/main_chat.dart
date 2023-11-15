@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/summary.dart';
+import 'package:healthlink/screens/auth/login.dart';
+import 'package:healthlink/screens/auth/signup_patient.dart';
+import 'package:healthlink/screens/doctor_summaries_screen.dart';
 import 'package:healthlink/screens/drawer_header.dart';
+import 'package:healthlink/screens/patient_settings.dart';
 import 'package:healthlink/utils/colors.dart';
-import 'package:healthlink/widgets/summary_list.dart';
+import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -190,7 +194,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 GestureDetector(
                   child: Icon(Icons.more_horiz),
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SettingsScreen(),
+                  )),
                 )
               ],
             ),
@@ -204,6 +210,40 @@ class _ChatScreenState extends State<ChatScreen> {
                   fontWeight: FontWeight.w600,
                   fontSize: 25),
               textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          GestureDetector(
+            onTap: () {
+              // Navigate to a new screen with search functionality
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      SearchScreen(summaries: getDummySummaries()),
+                ),
+              );
+            },
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: collaborateAppBarBgColor,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.search, color: Colors.white),
+                  SizedBox(width: 8.0),
+                  Text(
+                    'Search Doctor Summaries',
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  ),
+                ],
+              ),
             ),
           ),
 

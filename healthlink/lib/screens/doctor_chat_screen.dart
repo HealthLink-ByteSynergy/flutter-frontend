@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/summary.dart';
 import 'package:healthlink/screens/drawer_header.dart';
 import 'package:healthlink/utils/colors.dart';
-import 'package:healthlink/widgets/summary_list.dart';
+import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class DoctorChatScreen extends StatefulWidget {
   @override
@@ -20,7 +20,6 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: color3,
-      // ... (unchanged code)
       appBar: AppBar(
         backgroundColor: collaborateAppBarBgColor,
         title: Text('HealthLink'),

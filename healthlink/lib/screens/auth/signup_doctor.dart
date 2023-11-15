@@ -5,6 +5,7 @@ import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';
 import 'package:healthlink/utils/multi_select.dart';
+import 'package:healthlink/utils/widgets/member_selection.dart';
 
 class DoctorSignupScreen extends StatefulWidget {
   const DoctorSignupScreen({Key? key}) : super(key: key);
@@ -18,10 +19,57 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _licenseController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
   List specializations = [];
   List _selectedspecializations = [];
   bool isObscured = true;
   bool _isLoading = false;
+  Map<String, String> specializationsMap = {
+    '1': 'General Medicine / Internal Medicine',
+    '2': 'Cardiology',
+    '3': 'Dermatology',
+    '4': 'Endocrinology',
+    '5': 'Gastroenterology',
+    '6': 'Hematology',
+    '7': 'Infectious Disease',
+    '8': 'Nephrology',
+    '9': 'Neurology',
+    '10': 'Obstetrics and Gynecology',
+    '11': 'Oncology',
+    '12': 'Ophthalmology',
+    '13': 'Orthopedics',
+    '14': 'Otolaryngology (ENT - Ear, Nose, Throat)',
+    '15': 'Pediatrics',
+    '16': 'Psychiatry',
+    '17': 'Pulmonology',
+    '18': 'Rheumatology',
+    '19': 'Urology',
+    '20': 'General Surgery',
+    '21': 'Plastic Surgery',
+  };
+  // Map<String, String> specializationsMap = {
+  //   '1': 'General Medicine / Internal Medicine',
+  //   '2': 'Cardiology',
+  //   '3': 'Dermatology',
+  //   '4': 'Endocrinology',
+  //   '5': 'Gastroenterology',
+  //   '6': 'Hematology',
+  //   '7': 'Infectious Disease',
+  //   '8': 'Nephrology',
+  //   '9': 'Neurology',
+  //   '10': 'Obstetrics and Gynecology',
+  //   '11': 'Oncology',
+  //   '12': 'Ophthalmology',
+  //   '13': 'Orthopedics',
+  //   '14': 'Otolaryngology (ENT - Ear, Nose, Throat)',
+  //   '15': 'Pediatrics',
+  //   '16': 'Psychiatry',
+  //   '17': 'Pulmonology',
+  //   '18': 'Rheumatology',
+  //   '19': 'Urology',
+  //   '20': 'General Surgery',
+  //   '21': 'Plastic Surgery',
+  // };
 
   @override
   void dispose() {
@@ -30,6 +78,12 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
     _passwordController.dispose();
     _licenseController.dispose();
     _usernameController.dispose();
+    _numberController.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   void signUp() async {
@@ -193,6 +247,32 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 height: height * 0.025,
               ),
               TextField(
+                controller: _numberController,
+                autocorrect: false,
+                cursorColor: color4,
+                style: TextStyle(color: color4),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.phone,
+                    color: color4,
+                  ),
+                  labelText: 'Your Phone Number',
+                  labelStyle: TextStyle(color: color4),
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.white.withOpacity(0.3),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide:
+                        const BorderSide(width: 0, style: BorderStyle.none),
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(
+                height: height * 0.025,
+              ),
+              TextField(
                 controller: _licenseController,
                 autocorrect: false,
                 cursorColor: color4,
@@ -237,14 +317,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          _showMultiSelect([
-                            'Web Dev',
-                            'App Dev',
-                            'Machine Learning',
-                            'DevOps',
-                            'BlockChain',
-                            'CyberSecurity'
-                          ]);
+                          _showMemberSelectionDialog();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: color3,
@@ -278,6 +351,24 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                               ));
                         },
                       ),
+                      for (int i = 0; i < _selectedspecializations.length; i++)
+                        Row(
+                          children: [
+                            SizedBox(width: width * 0.1),
+                            Expanded(
+                              child: Text(_selectedspecializations[i],
+                                  style: GoogleFonts.raleway(
+                                      color: color4,
+                                      fontSize: width * 0.06,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => removeMember(i),
+                            ),
+                            SizedBox(width: width * 0.1),
+                          ],
+                        ),
                     ]),
               ),
               SizedBox(
@@ -362,8 +453,34 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
     // Update UI
     if (results != null) {
       setState(() {
-        specializations = results;
+        specializations = specializations + results;
         _selectedspecializations = specializations;
+      });
+    }
+  }
+
+  void removeMember(int index) {
+    setState(() {
+      _selectedspecializations.removeAt(index);
+    });
+  }
+
+  //it shows all the users and we can select users to add
+  void _showMemberSelectionDialog() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MemberSelectionDialog(
+          selectedSpecializations: _selectedspecializations,
+          available: specializationsMap,
+          displayMembers: specializationsMap,
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedspecializations = _selectedspecializations;
       });
     }
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthlink/models/summary.dart';
 import 'package:healthlink/sumtodetail.dart';
 import 'package:healthlink/utils/colors.dart';
-import 'package:healthlink/widgets/summary_description.dart';
+import 'package:healthlink/utils/widgets/summary_description.dart';
 
 class SummaryListWidget extends StatelessWidget {
   final List<Summary> summaries;

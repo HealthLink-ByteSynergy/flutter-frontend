@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
   bool isObscured = true;
   bool _isLoading = false;
 
@@ -25,6 +27,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _usernameController.dispose();
+    _numberController.dispose();
   }
 
   void signUp() async {
@@ -78,14 +81,14 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Container(
+          constraints: BoxConstraints(minHeight: height),
           color: collaborateAppBarBgColor,
           padding: const EdgeInsets.symmetric(horizontal: 32),
           width: double.infinity,
-          height: MediaQuery.of(context).size.height,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: height * 0.3),
+              SizedBox(height: height * 0.2),
               Text('HealthLink',
                   style: GoogleFonts.raleway(
                     fontSize: width * 0.12,
@@ -149,6 +152,32 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 height: height * 0.025,
               ),
               TextField(
+                controller: _numberController,
+                autocorrect: false,
+                cursorColor: color4,
+                style: TextStyle(color: color4),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
+                    Icons.phone,
+                    color: color4,
+                  ),
+                  labelText: 'Your Phone Number',
+                  labelStyle: TextStyle(color: color4),
+                  filled: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  fillColor: Colors.white.withOpacity(0.3),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide:
+                        const BorderSide(width: 0, style: BorderStyle.none),
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(
+                height: height * 0.025,
+              ),
+              TextField(
                 controller: _passwordController,
                 obscureText: isObscured,
                 autocorrect: false,
@@ -190,7 +219,8 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 // onTap: signUp,
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => HomeBody(jwtToken: 'ji')),
                 ),
                 child: Container(
                   height: height * 0.065,

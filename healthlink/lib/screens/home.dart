@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/form.dart';
 import 'package:healthlink/screens/auth/login.dart';
+import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class ChatInfo {
@@ -139,16 +140,36 @@ class _HomeBodyState extends State<HomeBody> {
                 itemCount: chatList.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ListTile(
-                      title: Text(chatList[index].patientName),
-                      subtitle: Text(chatList[index].reason),
-                      // Add other ListTile properties based on your ChatBox content
-                      onTap: () {
-                        // Handle item tap if needed
-                      },
-                    ),
-                  );
+                      padding: const EdgeInsets.symmetric(vertical: 1.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: color2,
+                            borderRadius: BorderRadius.circular(15.0)),
+                        child: ListTile(
+                          title: Text(
+                            chatList[index].patientName,
+                            style: GoogleFonts.raleway(
+                                color: blackColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(chatList[index].reason,
+                              style: GoogleFonts.raleway(
+                                color: collaborateAppBarBgColor,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              )),
+                          // Add other ListTile properties based on your ChatBox content
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChatScreen()),
+                            );
+                            // Handle item tap if needed
+                          },
+                        ),
+                      ));
                 },
               ),
             ),
@@ -167,19 +188,37 @@ class _HomeBodyState extends State<HomeBody> {
                             MedicalInfoForm(customForm: new CustomForm())),
                   );
                 },
-                label: Padding(
-                  padding: EdgeInsets.all(20.0),
+                label: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
                   child: Text(' Create Chat ',
                       style: GoogleFonts.raleway(
-                          color: blackColor,
+                          color: color4,
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
                 ),
-                backgroundColor: orange,
+                backgroundColor: collaborateAppBarBgColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
               ),
             ),
+    );
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Your App Title',
+      theme: ThemeData(
+          // Your theme settings
+          ),
+      home: HomeBody(jwtToken: 'yourToken'), // Use your HomeBody widget here
     );
   }
 }

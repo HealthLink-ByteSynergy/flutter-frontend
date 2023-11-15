@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
-import 'package:healthlink/widgets/custom_text_field.dart';
+import 'package:healthlink/utils/widgets/custom_text_field.dart';
 
 class MedicalInfoForm extends StatefulWidget {
   CustomForm customForm;
@@ -19,6 +19,7 @@ class MedicalInfoForm extends StatefulWidget {
 class _MedicalInfoFormState extends State<MedicalInfoForm> {
   late TextEditingController nameController;
   late TextEditingController ageController;
+  late TextEditingController numberController;
   late TextEditingController genderController;
   late TextEditingController heightController;
   late TextEditingController weightController;
@@ -38,6 +39,8 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
     nameController = TextEditingController(text: widget.customForm.name);
     ageController =
         TextEditingController(text: widget.customForm.age?.toString());
+    numberController =
+        TextEditingController(text: widget.customForm.number?.toString());
     genderController = TextEditingController(text: widget.customForm.gender);
     heightController =
         TextEditingController(text: widget.customForm.height?.toString());
@@ -92,6 +95,13 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   labelText: 'Your Age',
                   maxLength: 3,
                   keyboardType: TextInputType.number),
+              SizedBox(height: 8.0),
+              buildTextField(
+                  controller: numberController,
+                  prefixIcon: Icons.phone,
+                  labelText: 'Your Phone Number',
+                  maxLength: 10,
+                  keyboardType: TextInputType.number),
               SizedBox(height: 16.0),
               // Gender Dropdown
               DropdownButtonFormField<String>(
@@ -133,7 +143,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                 controller: heightController,
                 prefixIcon: Icons.height,
                 labelText: 'Your Height(in cms)',
-                maxLength: 3,
+                maxLength: 5,
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 16.0),
@@ -141,7 +151,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   controller: weightController,
                   prefixIcon: Icons.line_weight,
                   labelText: 'Your Weight(in kgs)',
-                  maxLength: 3,
+                  maxLength: 4,
                   keyboardType: TextInputType.number),
               SizedBox(height: 20.0),
               Padding(
