@@ -11,7 +11,7 @@ class CustomDrawerHeader extends SliverPersistentHeaderDelegate {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'User Name',
               style: TextStyle(
                 color: Colors.white,
@@ -24,7 +24,7 @@ class CustomDrawerHeader extends SliverPersistentHeaderDelegate {
                 Navigator.pop(context); // Close the drawer
                 // Navigate to the screen with three dots menu (specifications will be added later)
               },
-              child: Icon(Icons.more_horiz, color: Colors.white),
+              child: const Icon(Icons.more_horiz, color: Colors.white),
             ),
           ],
         ),

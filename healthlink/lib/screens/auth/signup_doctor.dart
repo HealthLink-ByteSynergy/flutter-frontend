@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
 import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
@@ -93,16 +93,17 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
     });
 
     // signing up the user, by using the AuthMethods class
-    String res = await AuthMethods().signUp(
-      email: _emailController.text,
-      password: _passwordController.text,
+    Map<String, dynamic> res = await AuthService().signUp(
+      _usernameController.text,
+      _emailController.text,
+      _passwordController.text,
     );
 
     setState(() {
       _isLoading = false;
     });
 
-    if (res == "success") {
+    if (res['message'] == "success") {
       // navigate to the login screen after successful signup
       if (context.mounted) {
         Navigator.of(context).pushReplacement(
@@ -118,7 +119,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
           SnackBar(
             backgroundColor: color2,
             content: Text(
-              res,
+              res['message'],
               style: GoogleFonts.raleway(fontSize: 18, color: color1),
             ),
           ),
@@ -186,14 +187,14 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 controller: _emailController,
                 autocorrect: true,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                     color: color4,
                   ),
                   labelText: 'Your email',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -213,7 +214,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 obscureText: isObscured,
                 autocorrect: false,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.lock_outline,
@@ -231,7 +232,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                     },
                   ),
                   labelText: 'Your password',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -250,14 +251,14 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 controller: _numberController,
                 autocorrect: false,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.phone,
                     color: color4,
                   ),
                   labelText: 'Your Phone Number',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -276,7 +277,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 controller: _licenseController,
                 autocorrect: false,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.numbers,
@@ -294,7 +295,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                   //   },
                   // ),
                   labelText: 'Your Medical License Number',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -335,12 +336,12 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                         ),
                       ),
                       ListView.builder(
-                        padding: EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
                         shrinkWrap: true,
                         itemCount: specializations.length,
                         itemBuilder: (context, index) {
                           return Container(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               alignment: Alignment.center,
                               child: Text(
                                 specializations[index],
@@ -378,7 +379,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 // onTap: signUp,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => HomeBody(jwtToken: 'ji'),
+                    builder: (context) => const HomeBody(jwtToken: 'ji'),
                   ),
                 ),
                 child: Container(

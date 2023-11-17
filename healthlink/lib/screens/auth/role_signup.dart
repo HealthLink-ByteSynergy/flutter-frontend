@@ -5,6 +5,8 @@ import 'package:healthlink/screens/auth/signup_patient.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class Role extends StatelessWidget {
+  const Role({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +30,7 @@ class Role extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => PatientSignupScreen()),
+                      builder: (context) => const PatientSignupScreen()),
                 );
               },
               child: Padding(
@@ -40,7 +42,7 @@ class Role extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 100),
+            const SizedBox(height: 100),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: blackColor,
@@ -52,7 +54,7 @@ class Role extends StatelessWidget {
                 // Navigate to DoctorScreen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => DoctorSignupScreen()),
+                  MaterialPageRoute(builder: (context) => const DoctorSignupScreen()),
                 );
               },
               child: Padding(

@@ -6,7 +6,7 @@ import 'package:healthlink/utils/widgets/summary_list.dart';
 class SearchScreen extends StatefulWidget {
   final List<Summary> summaries;
 
-  SearchScreen({required this.summaries});
+  const SearchScreen({super.key, required this.summaries});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -41,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
         backgroundColor: color3,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: collaborateAppBarBgColor),
+          iconTheme: const IconThemeData(color: collaborateAppBarBgColor),
           backgroundColor: color3,
           title: Container(
             decoration: BoxDecoration(
@@ -50,17 +50,17 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             child: TextField(
               onChanged: _filterSummaries,
-              style: TextStyle(color: collaborateAppBarBgColor), // Text color
+              style: const TextStyle(color: collaborateAppBarBgColor), // Text color
               decoration: InputDecoration(
                 hintText: 'Search Doctor Summaries',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                     color: collaborateAppBarBgColor), // Hint text color
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 30, top: 15),
-                prefixIcon: Icon(Icons.search, color: collaborateAppBarBgColor),
+                contentPadding: const EdgeInsets.only(left: 30, top: 15),
+                prefixIcon: const Icon(Icons.search, color: collaborateAppBarBgColor),
                 // contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear, color: collaborateAppBarBgColor),
+                  icon: const Icon(Icons.clear, color: collaborateAppBarBgColor),
                   onPressed: () {
                     // Clear the search text and reset the list
                     _filterSummaries('');

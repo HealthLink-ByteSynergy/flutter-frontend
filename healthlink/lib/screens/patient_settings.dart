@@ -5,10 +5,12 @@ import 'package:healthlink/screens/patient_details_screen.dart';
 import 'package:healthlink/utils/colors.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,10 +36,11 @@ class SettingsScreen extends StatelessWidget {
     ..setRecentSurgeryOrProcedure = 'Appendectomy'
     ..setAllergies = 'Pollen'
     ..setSmokingFrequency = 'Occasional'
-    ..setYearsSmoked = 2
     ..setDrinkingFrequency = 'Socially'
     ..setDoesUseDrugs = true
     ..setDrugsUsedAndFrequency = 'Marijuana - Occasionally';
+
+  SettingsScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       backgroundColor: color3,
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: [
           ListTile(
             title: Text('Patient Name',
@@ -60,10 +63,10 @@ class SettingsScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 20)),
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           _buildSubheading('Main Account'),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.email_outlined,
               color: collaborateAppBarBgColor,
             ),
@@ -72,13 +75,13 @@ class SettingsScreen extends StatelessWidget {
               style: GoogleFonts.raleway(
                   color: collaborateAppBarBgColor, fontWeight: FontWeight.bold),
             ),
-            subtitle: Text(
+            subtitle: const Text(
                 'koushikpolisetty@gmail.com'), // Replace '...' with actual email
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           _buildSubheading('Patient Info'),
           ListTile(
-            title: Text('View User Details'),
+            title: const Text('View User Details'),
             onTap: () {
               // Handle the click on 'View User Details'
               // For example, navigate to another screen or show a dialog
@@ -90,10 +93,10 @@ class SettingsScreen extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           _buildSubheading('Account Actions'),
           ListTile(
-            title: Text('Sign Out'),
+            title: const Text('Sign Out'),
             onTap: () {
               // Handle the sign-out action
               // For example, show a confirmation dialog and sign out on confirmation
@@ -101,14 +104,14 @@ class SettingsScreen extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Sign Out'),
-                    content: Text('Are you sure you want to sign out?'),
+                    title: const Text('Sign Out'),
+                    content: const Text('Are you sure you want to sign out?'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
                       ),
                       TextButton(
                         onPressed: () {
@@ -116,7 +119,7 @@ class SettingsScreen extends StatelessWidget {
                           Navigator.of(context).pop(); // Close the dialog
                           // You can navigate to the login screen or perform any other necessary actions
                         },
-                        child: Text('Sign Out'),
+                        child: const Text('Sign Out'),
                       ),
                     ],
                   );

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/summary.dart';
-import 'package:healthlink/screens/auth/login.dart';
-import 'package:healthlink/screens/auth/signup_patient.dart';
 import 'package:healthlink/screens/doctor_summaries_screen.dart';
-import 'package:healthlink/screens/drawer_header.dart';
 import 'package:healthlink/screens/patient_settings.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -27,10 +26,10 @@ class _ChatScreenState extends State<ChatScreen> {
       // ... (unchanged code)
       appBar: AppBar(
         backgroundColor: collaborateAppBarBgColor,
-        title: Text('HealthLink'),
+        title: const Text('HealthLink'),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu), // Icon that opens the drawer
+            icon: const Icon(Icons.menu), // Icon that opens the drawer
             onPressed: () {
               // Open the drawer
               Scaffold.of(context).openDrawer();
@@ -43,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               children: [
                 _buildChatMessage(
                     'Hello, how can I help?, Hello, how can I help?, Hello, how can I help?, Hello, how can I help?',
@@ -51,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     DateTime.now()),
                 _buildChatMessage('Hi there!', true, DateTime.now()),
                 _buildChatMessage('Another user message', true,
-                    DateTime.now().subtract(Duration(days: 1))),
+                    DateTime.now().subtract(const Duration(days: 1))),
                 // Add more messages as needed
               ],
             ),
@@ -78,8 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
         Align(
           alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
-            margin: EdgeInsets.all(8.0),
-            padding: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75),
             decoration: BoxDecoration(
@@ -115,15 +114,15 @@ class _ChatScreenState extends State<ChatScreen> {
               },
               decoration: InputDecoration(
                 labelText: 'Message',
-                counterStyle: TextStyle(color: color4),
+                counterStyle: const TextStyle(color: color4),
                 labelStyle:
-                    TextStyle(color: color4), // Change to your preferred color
+                    const TextStyle(color: color4), // Change to your preferred color
                 filled: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 fillColor: collaborateAppBarBgColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide(width: 0, style: BorderStyle.none),
+                  borderSide: const BorderSide(width: 0, style: BorderStyle.none),
                 ),
               ),
               style: GoogleFonts.raleway(
@@ -132,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
               enabled: _botReplied, // Disable input if the bot hasn't replied
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           _buildSendButton(),
         ],
       ),
@@ -141,10 +140,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildDateSeparator(DateTime messageTime) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         '${messageTime.day}/${messageTime.month}/${messageTime.year}',
-        style: TextStyle(color: blackColor),
+        style: const TextStyle(color: blackColor),
       ),
     );
   }
@@ -163,7 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ? Colors.grey
               : collaborateAppBarBgColor,
         ),
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Icon(
           Icons.send,
           color: _isInputEmpty || !_botReplied ? color4 : color4,
@@ -193,7 +192,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 GestureDetector(
-                  child: Icon(Icons.more_horiz),
+                  child: const Icon(Icons.more_horiz),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => SettingsScreen(),
                   )),
@@ -212,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           GestureDetector(
@@ -232,8 +231,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: collaborateAppBarBgColor,
                 borderRadius: BorderRadius.circular(30),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.search, color: Colors.white),
@@ -272,7 +271,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -288,7 +287,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -304,7 +303,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -320,7 +319,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -336,7 +335,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -352,7 +351,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       // Add more dummy summaries as needed
     ];
@@ -366,7 +365,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController.clear();
 
     // Simulate bot's reply after a delay (you can replace this with actual logic)
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _botReplied = true; // Bot has replied, enable input and send button
       });
@@ -377,7 +376,7 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ChatScreen(),
   ));
 }

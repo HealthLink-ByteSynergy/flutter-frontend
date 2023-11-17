@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods class
-import 'package:healthlink/screens/home.dart';
-import 'package:healthlink/screens/main_chat.dart';
+import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';
@@ -37,10 +35,10 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
     });
 
     // signing up the user, by using the AuthMethods class
-    String res = await AuthMethods().signUp(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+    Map<String, dynamic> res = await AuthService().signUp(
+        _usernameController.text,
+        _emailController.text,
+        _passwordController.text);
 
     setState(() {
       _isLoading = false;
@@ -62,7 +60,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
           SnackBar(
             backgroundColor: color2,
             content: Text(
-              res,
+              res['message'],
               style: GoogleFonts.raleway(fontSize: 18, color: color1),
             ),
           ),
@@ -111,7 +109,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                   ),
                   labelText: 'Your username',
                   labelStyle: const TextStyle(color: color4),
-                  counterStyle: TextStyle(color: color4),
+                  counterStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -129,14 +127,14 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 controller: _emailController,
                 autocorrect: true,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                     color: color4,
                   ),
                   labelText: 'Your email',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -155,14 +153,14 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 controller: _numberController,
                 autocorrect: false,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.phone,
                     color: color4,
                   ),
                   labelText: 'Your Phone Number',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -182,7 +180,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 obscureText: isObscured,
                 autocorrect: false,
                 cursorColor: color4,
-                style: TextStyle(color: color4),
+                style: const TextStyle(color: color4),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(
                     Icons.lock_outline,
@@ -200,7 +198,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                     },
                   ),
                   labelText: 'Your password',
-                  labelStyle: TextStyle(color: color4),
+                  labelStyle: const TextStyle(color: color4),
                   filled: true,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   fillColor: Colors.white.withOpacity(0.3),
@@ -216,12 +214,12 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                 height: height * 0.075,
               ),
               InkWell(
-                // onTap: signUp,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomeBody(jwtToken: 'ji')),
-                ),
+                onTap: signUp,
+                // onTap: () => Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => HomeBody(jwtToken: 'ji')),
+                // ),
                 child: Container(
                   height: height * 0.065,
                   width: double.infinity,
@@ -260,7 +258,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
                     ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),

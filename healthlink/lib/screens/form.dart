@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
@@ -10,7 +11,7 @@ import 'package:healthlink/utils/widgets/custom_text_field.dart';
 class MedicalInfoForm extends StatefulWidget {
   CustomForm customForm;
 
-  MedicalInfoForm({required this.customForm});
+  MedicalInfoForm({super.key, required this.customForm});
 
   @override
   _MedicalInfoFormState createState() => _MedicalInfoFormState();
@@ -31,6 +32,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
   late TextEditingController drinkingFrequencyController;
   late TextEditingController drugUseAndFrequencyController;
   late CustomForm customForm;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -60,6 +62,85 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
         TextEditingController(text: widget.customForm.getDrinkingFrequency);
     drugUseAndFrequencyController =
         TextEditingController(text: widget.customForm.drugsUsedAndFrequency);
+  }
+
+  Future<void> _createChat() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      customForm.setValues(
+          nameController.text,
+          ageController.text,
+          numberController.text,
+          heightController.text,
+          weightController.text,
+          medicalConditionsController.text,
+          medicationsController.text,
+          recentSurgeryController.text,
+          allergiesController.text,
+          smokingFrequencyController.text,
+          drinkingFrequencyController.text,
+          drugUseAndFrequencyController.text);
+      if (customForm.validate() == true) {
+        final Map<String, dynamic> result =
+            await PatientService().savePatient(customForm);
+
+        if (result['success'] == true) {
+          // Login successful, navigate to the chat screen.
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => ChatScreen(),
+          ));
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Create Chat failed'),
+              content: Text(result['error']),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Create Chat failed'),
+            content: Text('All the questions were not answered'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Login Failed'),
+          content: Text(error.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -170,7 +251,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                     groupValue: customForm.getHasMedicalConditions,
                     onChanged: (value) {
                       setState(() {
-                        customForm.setHasMedicalConditions = value as bool?;
+                        customForm.setHasMedicalConditions = value;
                       });
                     },
                   ),
@@ -186,7 +267,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                     onChanged: (value) {
                       setState(() {
                         customForm.setHasMedicalConditions =
-                            value as bool?; // Add as String?
+                            value; // Add as String?
                       });
                     },
                   ),
@@ -518,7 +599,10 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(backgroundColor: blackColor),
-                    onPressed: () {}, // Submit button
+                    onPressed: () {
+                      customForm.reset();
+                      Navigator.pop(context);
+                    }, // Submit button
                     child: Text('Cancel',
                         style: GoogleFonts.raleway(
                             color: color4,
@@ -530,13 +614,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: orange),
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(),
-                        ),
-                      );
-                    }, // Submit button
+                    onPressed: _createChat, // Submit button
                     child: Text('Submit',
                         style: GoogleFonts.raleway(
                             color: blackColor,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/screens/home.dart'; // Import your HomeScreen widget
+// Import your HomeScreen widget
 import 'package:healthlink/screens/auth/login.dart'; // Import your LoginScreen widget
-import 'package:healthlink/auth/auth_methods.dart'; // Import your modified AuthMethods class
+// Import your modified AuthMethods class
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,15 +16,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AuthenticationWrapper(),
+      home: const AuthenticationWrapper(),
     );
   }
 }
 
 class AuthenticationWrapper extends StatelessWidget {
+  const AuthenticationWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return LoginScreen();
+    return const LoginScreen();
     // return FutureBuilder(
     //   future: AuthMethods.fetchToken(),
     //   builder: (context, snapshot) {

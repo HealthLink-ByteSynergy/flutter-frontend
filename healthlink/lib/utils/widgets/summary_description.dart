@@ -3,14 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/detailed_summary.dart';
-import 'package:healthlink/models/summary.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:intl/intl.dart';
 
 class SummaryDetailsScreen extends StatelessWidget {
   final DetailedSummary summary;
 
-  SummaryDetailsScreen({required this.summary});
+  const SummaryDetailsScreen({super.key, required this.summary});
 
   @override
   Widget build(BuildContext context) {
@@ -57,46 +56,46 @@ class SummaryDetailsScreen extends StatelessWidget {
                 style: GoogleFonts.raleway(
                     color: collaborateAppBarBgColor, fontSize: 16)),
             SizedBox(height: 20),
-            if (summary.prescription != null) ...[
-              Text('Prescription',
+            ...[
+            Text('Prescription',
+                style: GoogleFonts.raleway(
+                    color: collaborateAppBarBgColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            if (summary.prescription.medicines.isNotEmpty) ...[
+              Text('Medicine',
                   style: GoogleFonts.raleway(
                       color: collaborateAppBarBgColor,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
-              if (summary.prescription!.medicines.isNotEmpty) ...[
-                Text('Medicine',
-                    style: GoogleFonts.raleway(
-                        color: collaborateAppBarBgColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: summary.prescription!.medicines.length,
-                  itemBuilder: (context, index) {
-                    final medicine = summary.prescription!.medicines[index];
-                    return ListTile(
-                      title: Text('${medicine.name} - ${medicine.dosage}'),
-                      subtitle: Text('Frequency: ${medicine.frequency}'),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-              ],
-              if (summary.prescription!.generalHabits.isNotEmpty) ...[
-                Text('General Habits',
-                    style: GoogleFonts.raleway(
-                        color: collaborateAppBarBgColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Text(summary.prescription!.generalHabits,
-                    style: GoogleFonts.raleway(
-                        color: collaborateAppBarBgColor, fontSize: 16)),
-                SizedBox(height: 20),
-              ],
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: summary.prescription.medicines.length,
+                itemBuilder: (context, index) {
+                  final medicine = summary.prescription.medicines[index];
+                  return ListTile(
+                    title: Text('${medicine.name} - ${medicine.dosage}'),
+                    subtitle: Text('Frequency: ${medicine.frequency}'),
+                  );
+                },
+              ),
+              SizedBox(height: 20),
             ],
+            if (summary.prescription.generalHabits.isNotEmpty) ...[
+              Text('General Habits',
+                  style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text(summary.prescription.generalHabits,
+                  style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor, fontSize: 16)),
+              SizedBox(height: 20),
+            ],
+          ],
           ],
         ),
       ),

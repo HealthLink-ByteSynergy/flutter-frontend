@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/summary.dart';
-import 'package:healthlink/screens/drawer_header.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class DoctorChatScreen extends StatefulWidget {
+  const DoctorChatScreen({super.key});
+
   @override
   _DoctorChatScreenState createState() => _DoctorChatScreenState();
 }
@@ -22,10 +23,10 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
       backgroundColor: color3,
       appBar: AppBar(
         backgroundColor: collaborateAppBarBgColor,
-        title: Text('HealthLink'),
+        title: const Text('HealthLink'),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu), // Icon that opens the drawer
+            icon: const Icon(Icons.menu), // Icon that opens the drawer
             onPressed: () {
               // Open the drawer
               Scaffold.of(context).openDrawer();
@@ -38,7 +39,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               children: [
                 _buildChatMessage(
                     'Hello, how can I help?, Hello, how can I help?, Hello, how can I help?, Hello, how can I help?',
@@ -46,7 +47,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                     DateTime.now()),
                 _buildChatMessage('Hi there!', true, DateTime.now()),
                 _buildChatMessage('Another user message', true,
-                    DateTime.now().subtract(Duration(days: 1))),
+                    DateTime.now().subtract(const Duration(days: 1))),
                 // Add more messages as needed
               ],
             ),
@@ -71,8 +72,8 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         Align(
           alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
-            margin: EdgeInsets.all(8.0),
-            padding: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75),
             decoration: BoxDecoration(
@@ -108,15 +109,15 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
               },
               decoration: InputDecoration(
                 labelText: 'Message',
-                counterStyle: TextStyle(color: color4),
+                counterStyle: const TextStyle(color: color4),
                 labelStyle:
-                    TextStyle(color: color4), // Change to your preferred color
+                    const TextStyle(color: color4), // Change to your preferred color
                 filled: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 fillColor: collaborateAppBarBgColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide(width: 0, style: BorderStyle.none),
+                  borderSide: const BorderSide(width: 0, style: BorderStyle.none),
                 ),
               ),
               style: GoogleFonts.raleway(
@@ -125,7 +126,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
               enabled: _botReplied, // Disable input if the bot hasn't replied
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           _buildSendButton(),
         ],
       ),
@@ -134,10 +135,10 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
 
   Widget _buildDateSeparator(DateTime messageTime) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         '${messageTime.day}/${messageTime.month}/${messageTime.year}',
-        style: TextStyle(color: blackColor),
+        style: const TextStyle(color: blackColor),
       ),
     );
   }
@@ -156,7 +157,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
               ? Colors.grey
               : collaborateAppBarBgColor,
         ),
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Icon(
           Icons.send,
           color: _isInputEmpty || !_botReplied ? color4 : color4,
@@ -186,7 +187,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                   ),
                 ),
                 GestureDetector(
-                  child: Icon(Icons.more_horiz),
+                  child: const Icon(Icons.more_horiz),
                   onTap: () {},
                 )
               ],
@@ -229,7 +230,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -245,7 +246,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -261,7 +262,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -277,7 +278,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -293,7 +294,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
@@ -309,7 +310,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
         doctorId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(Duration(days: 1)),
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       // Add more dummy summaries as needed
     ];
@@ -323,7 +324,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
     _messageController.clear();
 
     // Simulate bot's reply after a delay (you can replace this with actual logic)
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _botReplied = true; // Bot has replied, enable input and send button
       });

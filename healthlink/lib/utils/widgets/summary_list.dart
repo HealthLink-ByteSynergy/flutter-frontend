@@ -7,18 +7,18 @@ import 'package:healthlink/utils/widgets/summary_description.dart';
 class SummaryListWidget extends StatelessWidget {
   final List<Summary> summaries;
 
-  SummaryListWidget({required this.summaries});
+  const SummaryListWidget({super.key, required this.summaries});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.only(top: 8.0),
       itemCount: summaries.length,
       itemBuilder: (context, index) {
         Summary summary = summaries[index];
 
         return Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           decoration: BoxDecoration(
               color: color2, borderRadius: BorderRadius.circular(20.0)),
           child: ListTile(

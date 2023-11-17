@@ -14,21 +14,21 @@ Widget buildTextField({
     cursorColor: color4, // Change to your preferred color
     maxLength: maxLength,
     maxLines: null,
-    style: TextStyle(color: color4), // Change to your preferred color
+    style: const TextStyle(color: color4), // Change to your preferred color
     decoration: InputDecoration(
       prefixIcon: Icon(
         prefixIcon,
         color: color4, // Change to your preferred color
       ),
       labelText: labelText,
-      counterStyle: TextStyle(color: color4),
-      labelStyle: TextStyle(color: color4), // Change to your preferred color
+      counterStyle: const TextStyle(color: color4),
+      labelStyle: const TextStyle(color: color4), // Change to your preferred color
       filled: true,
       floatingLabelBehavior: FloatingLabelBehavior.never,
       fillColor: Colors.white.withOpacity(0.3),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30.0),
-        borderSide: BorderSide(width: 0, style: BorderStyle.none),
+        borderSide: const BorderSide(width: 0, style: BorderStyle.none),
       ),
     ),
     keyboardType: keyboardType,

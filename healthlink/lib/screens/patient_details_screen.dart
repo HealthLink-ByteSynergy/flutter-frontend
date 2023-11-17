@@ -7,7 +7,7 @@ import 'package:healthlink/utils/colors.dart';
 class UserDetailsScreen extends StatelessWidget {
   final CustomForm user;
 
-  UserDetailsScreen({required this.user});
+  const UserDetailsScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +36,10 @@ class UserDetailsScreen extends StatelessWidget {
                   user.getRecentSurgeryOrProcedure),
               _buildDetail('Allergies', user.getAllergies),
               _buildDetail('Smoking Frequency', user.getSmokingFrequency),
-              _buildDetail('Years Smoked', user.getYearsSmoked.toString()),
               _buildDetail('Drinking Frequency', user.getDrinkingFrequency),
               _buildDetail(
                   'Drugs Used and Frequency', user.getDrugsUsedAndFrequency),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
@@ -92,10 +91,10 @@ class UserDetailsScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 4.0),
+          const SizedBox(height: 4.0),
           Text(
             value ?? 'Not provided',
-            style: TextStyle(fontSize: 16.0),
+            style: const TextStyle(fontSize: 16.0),
           ),
         ],
       ),

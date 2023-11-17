@@ -2,7 +2,6 @@ import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/detailed_summary.dart';
 import 'package:healthlink/models/prescription.dart';
 import 'package:healthlink/models/summary.dart';
-import 'package:intl/intl.dart';
 
 DetailedSummary generateDetailedSummary(Summary summary) {
   // Dummy data

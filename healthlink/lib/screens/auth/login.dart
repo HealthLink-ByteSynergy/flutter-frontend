@@ -1,12 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:healthlink/auth/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
 // import 'package:healthlink/screens/auth/reset_password.dart';
 // import 'package:healthlink/screens/auth/signup_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/role_signup.dart';
 import 'package:healthlink/screens/home.dart';
-import 'package:healthlink/screens/auth/reset_password.dart';
-import 'package:healthlink/screens/auth/signup_patient.dart';
+// import 'package:healthlink/screens/auth/reset_password.dart';
+// import 'package:healthlink/screens/auth/signup_patient.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,21 +30,43 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final String token = await AuthMethods().loginUser(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+      final Map<String, dynamic> result = await AuthService()
+          .login(_emailController.text, _passwordController.text);
 
-      if (token.isNotEmpty) {
+      if (result['success']) {
         // Login successful, navigate to the home screen.
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeBody(jwtToken: token),
+          builder: (context) => HomeBody(jwtToken: result['token']),
         ));
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Login Failed'),
+            content: Text(result['message']),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
       }
     } catch (error) {
-      // Handle login errors, show error message to the user.
-      print("Error during login: $error");
-      // You can show a snackbar or a dialog to display the error message to the user.
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Failed'),
+          content: Text(error.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } finally {
       setState(() {
         _isLoading = false;
@@ -137,34 +161,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 keyboardType: TextInputType.visiblePassword,
               ),
-              GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ResetPassword(),
-                  ),
-                ),
-                child: Container(
-                  alignment: Alignment.topRight,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    'Reset Password?',
-                    style: GoogleFonts.ptSans(
-                        fontWeight: FontWeight.bold, color: color4),
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () => Navigator.of(context).push(
+              //     MaterialPageRoute(
+              //       builder: (context) => const ResetPassword(),
+              //     ),
+              //   ),
+              //   child: Container(
+              //     alignment: Alignment.topRight,
+              //     padding: const EdgeInsets.symmetric(vertical: 12),
+              //     child: Text(
+              //       'Reset Password?',
+              //       style: GoogleFonts.ptSans(
+              //           fontWeight: FontWeight.bold, color: color4),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 30,
               ),
               InkWell(
-                // onTap:
-                //     _loginUser,
+                onTap: _loginUser,
                 // Call the _loginUser method when the user taps the login button
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => HomeBody(jwtToken: 'ji'),
-                  ),
-                ),
+                // onTap: () => Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => HomeBody(jwtToken: 'ji'),
+                //   ),
+                // ),
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
@@ -204,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => Role(),
+                        builder: (context) => const Role(),
                       ),
                     ),
                     child: Container(

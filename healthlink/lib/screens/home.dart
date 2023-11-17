@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/user_service.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/form.dart';
-import 'package:healthlink/screens/auth/login.dart';
 import 'package:healthlink/screens/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
 
@@ -18,7 +18,7 @@ class ChatInfo {
 class ChatBox extends StatelessWidget {
   final ChatInfo chatInfo;
 
-  ChatBox({required this.chatInfo});
+  const ChatBox({super.key, required this.chatInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class ChatBox extends StatelessWidget {
 
 class HomeBody extends StatefulWidget {
   final String jwtToken;
-  HomeBody({required this.jwtToken});
+  const HomeBody({super.key, required this.jwtToken});
 
   @override
   _HomeBodyState createState() => _HomeBodyState();
@@ -57,6 +57,7 @@ class _HomeBodyState extends State<HomeBody> {
   // ... other code ...
 
   ChatInfo a = ChatInfo(patientName: 'abcs', reason: 'physio');
+  final UserService _userService = UserService();
 
   List<ChatInfo> chatList = []; // List to store chat information
 
@@ -64,18 +65,18 @@ class _HomeBodyState extends State<HomeBody> {
   void initState() {
     super.initState();
     // Adding sample chat boxes to the chatList
-    chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
   }
 
   @override
@@ -92,8 +93,38 @@ class _HomeBodyState extends State<HomeBody> {
           ? Padding(
               padding: const EdgeInsets.all(25.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  FutureBuilder<String?>(
+                    future: _userService.getUsername(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text('Loading...'); // Placeholder while fetching
+                      } else if (snapshot.hasData) {
+                        return Text(
+                          'Welcome, ${snapshot.data}',
+                          style: GoogleFonts.raleway(
+                            color: collaborateAppBarBgColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 50,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      } else {
+                        return Text(
+                          'HealthLink', // Default text if username fetching fails
+                          style: GoogleFonts.raleway(
+                            color: color4,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 50,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: 200,
+                  ),
                   Center(
                     child: Text(
                       'Please create a new chat window by clicking on the button below',
@@ -119,7 +150,7 @@ class _HomeBodyState extends State<HomeBody> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                MedicalInfoForm(customForm: new CustomForm())),
+                                MedicalInfoForm(customForm: CustomForm())),
                       );
                     },
                     child: Text(
@@ -176,7 +207,7 @@ class _HomeBodyState extends State<HomeBody> {
 
       floatingActionButton: chatList.isEmpty
           ? null // If chatList is empty, no FAB
-          : Container(
+          : SizedBox(
               width: 100,
               height: 50,
               child: FloatingActionButton.extended(
@@ -185,7 +216,7 @@ class _HomeBodyState extends State<HomeBody> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MedicalInfoForm(customForm: new CustomForm())),
+                            MedicalInfoForm(customForm: CustomForm())),
                   );
                 },
                 label: Container(
@@ -211,6 +242,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

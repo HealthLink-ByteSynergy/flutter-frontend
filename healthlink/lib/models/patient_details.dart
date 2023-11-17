@@ -2,11 +2,11 @@
 
 class CustomForm {
   String? name;
-  int? age;
+  String? age;
   String? number;
   String? gender;
-  double? height;
-  double? weight;
+  String? height;
+  String? weight;
   bool? hasMedicalConditions;
   String? medicalConditions;
   String? medications;
@@ -16,7 +16,6 @@ class CustomForm {
   String? allergies;
   bool? doesSmokeCigarettes;
   String? smokingFrequency;
-  int? yearsSmoked;
   bool? doesDrinkAlcohol;
   String? drinkingFrequency;
   bool? doesUseDrugs;
@@ -89,10 +88,6 @@ class CustomForm {
   set setSmokingFrequency(smokingFrequency) =>
       this.smokingFrequency = smokingFrequency;
 
-  get getYearsSmoked => this.yearsSmoked;
-
-  set setYearsSmoked(yearsSmoked) => this.yearsSmoked = yearsSmoked;
-
   get getDoesDrinkAlcohol => this.doesDrinkAlcohol;
 
   set setDoesDrinkAlcohol(doesDrinkAlcohol) =>
@@ -131,9 +126,56 @@ class CustomForm {
     doesDrinkAlcohol = null;
     drinkingFrequency = null;
     doesUseDrugs = null;
+    drugsUsedAndFrequency = null;
   }
 
-  bool? validate() {
+  void setValues(
+    String name,
+    String age,
+    String number,
+    String height,
+    String weight,
+    String medicalConditions,
+    String medications,
+    String recentSurgeryOrProcedure,
+    String allergies,
+    String smokingFrequency,
+    String drinkingFrequency,
+    String drugsUsedAndFrequency,
+  ) {
+    this.name = name;
+    this.age = age;
+    this.number = number;
+    this.height = height;
+    this.weight = weight;
+    this.medicalConditions = medicalConditions;
+    this.medications = medications;
+    this.recentSurgeryOrProcedure = recentSurgeryOrProcedure;
+    this.allergies = allergies;
+    this.drinkingFrequency = drinkingFrequency;
+    this.drugsUsedAndFrequency = drugsUsedAndFrequency;
+    this.smokingFrequency = smokingFrequency;
+
+    if (this.hasMedicalConditions == false) {
+      this.medicalConditions = 'None';
+      this.medications = 'None';
+    }
+    if (this.isAllergicToAnyMedications == false) {
+      this.allergies = 'None';
+    }
+    if (this.doesSmokeCigarettes == false) {
+      this.smokingFrequency = 'None';
+    }
+    if (this.doesDrinkAlcohol == false) {
+      this.drinkingFrequency = 'None';
+    }
+    if (this.doesUseDrugs == false) {
+      this.drugsUsedAndFrequency = 'None';
+    }
+  }
+
+  bool validate() {
+    print(this);
     return name != null &&
         age != null &&
         number != null &&
@@ -172,5 +214,15 @@ class CustomForm {
     drinkingFrequency = null;
     doesUseDrugs = null;
     drugsUsedAndFrequency = null;
+  }
+
+  @override
+  String toString() {
+    return 'CustomForm{name: $name, age: $age, number: $number, gender: $gender, height: $height, weight: $weight, '
+        'hasMedicalConditions: $hasMedicalConditions, medicalConditions: $medicalConditions, medications: $medications, '
+        'hasHadRecentSurgeryOrProcedure: $hasHadRecentSurgeryOrProcedure, recentSurgeryOrProcedure: $recentSurgeryOrProcedure, '
+        'isAllergicToAnyMedications: $isAllergicToAnyMedications, allergies: $allergies, doesSmokeCigarettes: $doesSmokeCigarettes, '
+        'smokingFrequency: $smokingFrequency, doesDrinkAlcohol: $doesDrinkAlcohol, drinkingFrequency: $drinkingFrequency, '
+        'doesUseDrugs: $doesUseDrugs, drugsUsedAndFrequency: $drugsUsedAndFrequency}';
   }
 }
