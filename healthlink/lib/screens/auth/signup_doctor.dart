@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
 import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';
-import 'package:healthlink/utils/multi_select.dart';
 import 'package:healthlink/utils/widgets/member_selection.dart';
 
 class DoctorSignupScreen extends StatefulWidget {
@@ -439,25 +438,6 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
         ),
       ),
     );
-  }
-
-  void _showMultiSelect(items) async {
-    final List? results = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelect(
-          items: items,
-          selectedItems: _selectedspecializations,
-        );
-      },
-    );
-    // Update UI
-    if (results != null) {
-      setState(() {
-        specializations = specializations + results;
-        _selectedspecializations = specializations;
-      });
-    }
   }
 
   void removeMember(int index) {

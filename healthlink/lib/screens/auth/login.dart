@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
 // import 'package:healthlink/screens/auth/reset_password.dart';
 // import 'package:healthlink/screens/auth/signup_screen.dart';
 import 'package:google_fonts/google_fonts.dart';

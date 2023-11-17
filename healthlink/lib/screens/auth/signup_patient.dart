@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/Service/auth_methods.dart'; // Import your AuthMethods class
+import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';
@@ -258,7 +258,8 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
                     ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),

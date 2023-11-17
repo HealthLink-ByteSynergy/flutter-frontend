@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/summary.dart';
-import 'package:healthlink/screens/doctor_summaries_screen.dart';
-import 'package:healthlink/screens/patient_settings.dart';
+import 'package:healthlink/screens/Patient/doctor_summaries_screen.dart';
+import 'package:healthlink/screens/Patient/patient_settings.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
@@ -115,14 +115,15 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: InputDecoration(
                 labelText: 'Message',
                 counterStyle: const TextStyle(color: color4),
-                labelStyle:
-                    const TextStyle(color: color4), // Change to your preferred color
+                labelStyle: const TextStyle(
+                    color: color4), // Change to your preferred color
                 filled: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 fillColor: collaborateAppBarBgColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: const BorderSide(width: 0, style: BorderStyle.none),
+                  borderSide:
+                      const BorderSide(width: 0, style: BorderStyle.none),
                 ),
               ),
               style: GoogleFonts.raleway(
@@ -231,7 +232,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: collaborateAppBarBgColor,
                 borderRadius: BorderRadius.circular(30),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

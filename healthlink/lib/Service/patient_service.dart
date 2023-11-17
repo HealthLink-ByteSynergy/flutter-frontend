@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:healthlink/Service/auth_methods.dart';
+import 'package:healthlink/Service/auth_service.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:http/http.dart' as http;

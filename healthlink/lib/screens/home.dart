@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/user_service.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/form.dart';
-import 'package:healthlink/screens/main_chat.dart';
+import 'package:healthlink/screens/Patient/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class ChatInfo {

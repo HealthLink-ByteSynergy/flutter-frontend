@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:healthlink/Service/auth_methods.dart';
+import 'package:healthlink/Service/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
