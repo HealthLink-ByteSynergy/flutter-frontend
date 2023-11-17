@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:healthlink/models/summary.dart';
+import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
@@ -110,14 +110,15 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
               decoration: InputDecoration(
                 labelText: 'Message',
                 counterStyle: const TextStyle(color: color4),
-                labelStyle:
-                    const TextStyle(color: color4), // Change to your preferred color
+                labelStyle: const TextStyle(
+                    color: color4), // Change to your preferred color
                 filled: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 fillColor: collaborateAppBarBgColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
-                  borderSide: const BorderSide(width: 0, style: BorderStyle.none),
+                  borderSide:
+                      const BorderSide(width: 0, style: BorderStyle.none),
                 ),
               ),
               style: GoogleFonts.raleway(

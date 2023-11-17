@@ -44,7 +44,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
       _isLoading = false;
     });
 
-    if (res == "success") {
+    if (res['success'] == true) {
       // navigate to the login screen after successful signup
       if (context.mounted) {
         Navigator.of(context).pushReplacement(

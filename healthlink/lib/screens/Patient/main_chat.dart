@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:healthlink/models/summary.dart';
+import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/screens/Patient/doctor_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
 import 'package:healthlink/utils/colors.dart';
@@ -175,7 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildDrawer() {
     return Drawer(
-      backgroundColor: color3,
+      backgroundColor: collaborateAppBarBgColor,
       child: Column(
         children: [
           DrawerHeader(
@@ -186,14 +186,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Text(
                     'Ramsai Koushik Polisetti',
                     style: GoogleFonts.raleway(
-                      color: collaborateAppBarBgColor,
+                      color: color4,
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 GestureDetector(
-                  child: const Icon(Icons.more_horiz),
+                  child: const Icon(
+                    Icons.more_horiz,
+                    color: color4,
+                  ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => SettingsScreen(),
                   )),

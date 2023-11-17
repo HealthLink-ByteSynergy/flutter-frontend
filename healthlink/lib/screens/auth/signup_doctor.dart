@@ -378,7 +378,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 // onTap: signUp,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const HomeBody(jwtToken: 'ji'),
+                    builder: (context) => const HomeBody(),
                   ),
                 ),
                 child: Container(

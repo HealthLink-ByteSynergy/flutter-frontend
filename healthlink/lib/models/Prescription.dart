@@ -12,4 +12,11 @@ class Prescription {
     required this.medicines,
     required this.generalHabits,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'prescriptionId': '',
+      'genralHabits': generalHabits,
+    };
+  }
 }

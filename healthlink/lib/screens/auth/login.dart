@@ -2,13 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
-// import 'package:healthlink/screens/auth/reset_password.dart';
-// import 'package:healthlink/screens/auth/signup_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/role_signup.dart';
 import 'package:healthlink/screens/home.dart';
-// import 'package:healthlink/screens/auth/reset_password.dart';
-// import 'package:healthlink/screens/auth/signup_patient.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,10 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
       final Map<String, dynamic> result = await AuthService()
           .login(_emailController.text, _passwordController.text);
 
-      if (result['success']) {
+      if (result['success'] == true) {
         // Login successful, navigate to the home screen.
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeBody(jwtToken: result['token']),
+          builder: (context) => HomeBody(),
         ));
       } else {
         showDialog(

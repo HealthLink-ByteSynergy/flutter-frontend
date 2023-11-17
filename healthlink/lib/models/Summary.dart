@@ -14,4 +14,18 @@ class Summary {
     required this.prescriptionId,
     required this.timestamp,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'summaryId': summaryId,
+      'doctorEntity': {
+        'doctorId': doctorId,
+      },
+      'patientEntity': {
+        'patientId': patientId,
+      },
+      'text': summaryText,
+      'date': timestamp,
+    };
+  }
 }

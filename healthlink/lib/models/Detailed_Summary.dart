@@ -1,4 +1,4 @@
-import 'package:healthlink/models/prescription.dart';
+import 'package:healthlink/models/Prescription.dart';
 
 class DetailedSummary {
   final String doctorName;

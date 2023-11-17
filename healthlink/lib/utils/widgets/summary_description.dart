@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:healthlink/models/detailed_summary.dart';
+import 'package:healthlink/models/Detailed_Summary.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -57,45 +57,45 @@ class SummaryDetailsScreen extends StatelessWidget {
                     color: collaborateAppBarBgColor, fontSize: 16)),
             SizedBox(height: 20),
             ...[
-            Text('Prescription',
-                style: GoogleFonts.raleway(
-                    color: collaborateAppBarBgColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            if (summary.prescription.medicines.isNotEmpty) ...[
-              Text('Medicine',
+              Text('Prescription',
                   style: GoogleFonts.raleway(
                       color: collaborateAppBarBgColor,
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: summary.prescription.medicines.length,
-                itemBuilder: (context, index) {
-                  final medicine = summary.prescription.medicines[index];
-                  return ListTile(
-                    title: Text('${medicine.name} - ${medicine.dosage}'),
-                    subtitle: Text('Frequency: ${medicine.frequency}'),
-                  );
-                },
-              ),
-              SizedBox(height: 20),
+              if (summary.prescription.medicines.isNotEmpty) ...[
+                Text('Medicine',
+                    style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: summary.prescription.medicines.length,
+                  itemBuilder: (context, index) {
+                    final medicine = summary.prescription.medicines[index];
+                    return ListTile(
+                      title: Text('${medicine.name} - ${medicine.dosage}'),
+                      subtitle: Text('Frequency: ${medicine.frequency}'),
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
+              ],
+              if (summary.prescription.generalHabits.isNotEmpty) ...[
+                Text('General Habits',
+                    style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                Text(summary.prescription.generalHabits,
+                    style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor, fontSize: 16)),
+                SizedBox(height: 20),
+              ],
             ],
-            if (summary.prescription.generalHabits.isNotEmpty) ...[
-              Text('General Habits',
-                  style: GoogleFonts.raleway(
-                      color: collaborateAppBarBgColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Text(summary.prescription.generalHabits,
-                  style: GoogleFonts.raleway(
-                      color: collaborateAppBarBgColor, fontSize: 16)),
-              SizedBox(height: 20),
-            ],
-          ],
           ],
         ),
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthlink/models/summary.dart';
+import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
@@ -50,17 +50,20 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             child: TextField(
               onChanged: _filterSummaries,
-              style: const TextStyle(color: collaborateAppBarBgColor), // Text color
+              style: const TextStyle(
+                  color: collaborateAppBarBgColor), // Text color
               decoration: InputDecoration(
                 hintText: 'Search Doctor Summaries',
                 hintStyle: const TextStyle(
                     color: collaborateAppBarBgColor), // Hint text color
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.only(left: 30, top: 15),
-                prefixIcon: const Icon(Icons.search, color: collaborateAppBarBgColor),
+                prefixIcon:
+                    const Icon(Icons.search, color: collaborateAppBarBgColor),
                 // contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear, color: collaborateAppBarBgColor),
+                  icon:
+                      const Icon(Icons.clear, color: collaborateAppBarBgColor),
                   onPressed: () {
                     // Clear the search text and reset the list
                     _filterSummaries('');

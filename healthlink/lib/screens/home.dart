@@ -46,8 +46,7 @@ class ChatBox extends StatelessWidget {
 }
 
 class HomeBody extends StatefulWidget {
-  final String jwtToken;
-  const HomeBody({super.key, required this.jwtToken});
+  const HomeBody({super.key});
 
   @override
   _HomeBodyState createState() => _HomeBodyState();
@@ -251,7 +250,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           // Your theme settings
           ),
-      home: HomeBody(jwtToken: 'yourToken'), // Use your HomeBody widget here
+      home: HomeBody(), // Use your HomeBody widget here
     );
   }
 }
