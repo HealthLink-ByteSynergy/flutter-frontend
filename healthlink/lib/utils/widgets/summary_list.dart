@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/sumtodetail.dart';
 import 'package:healthlink/utils/colors.dart';
@@ -22,8 +23,14 @@ class SummaryListWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: color2, borderRadius: BorderRadius.circular(20.0)),
           child: ListTile(
-            title: Text('Doctor ID: ${summary.doctorId}'),
-            subtitle: Text('Timestamp: ${summary.timestamp}'),
+            title: Text(
+              'Doctor ID: ${summary.doctorId}',
+              style: GoogleFonts.raleway(color: color4),
+            ),
+            subtitle: Text(
+              'Timestamp: ${summary.timestamp.day}-${summary.timestamp.month}-${summary.timestamp.year}',
+              style: GoogleFonts.raleway(color: color4),
+            ),
             onTap: () {
               // Navigate to a new screen to display detailed summary information
               Navigator.push(

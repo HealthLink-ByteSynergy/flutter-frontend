@@ -1,49 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/auth_service.dart';
+import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/Service/user_service.dart';
+import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/form.dart';
 import 'package:healthlink/screens/Patient/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
-
-class ChatInfo {
-  String patientName;
-  String reason;
-
-  ChatInfo({required this.patientName, required this.reason});
-}
-
-class ChatBox extends StatelessWidget {
-  final ChatInfo chatInfo;
-
-  const ChatBox({super.key, required this.chatInfo});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Handle chat box click, navigate to chat screen
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(chatInfo: chatInfo)));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color:
-              collaborateAppBarBgColor, // Fill the box with a light blue color
-          border: Border.all(color: collaborateAppBarBgColor),
-          borderRadius: BorderRadius.circular(25.0),
-        ),
-        // margin: EdgeInsets.all(2.0), // Add margin to the box
-        padding: EdgeInsets.all(4.0),
-        child: Center(
-            child: Text(chatInfo.patientName,
-                style: GoogleFonts.raleway(
-                    color: color4, fontWeight: FontWeight.bold, fontSize: 25))),
-      ),
-    );
-  }
-}
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -53,29 +17,29 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  // ... other code ...
-
-  ChatInfo a = ChatInfo(patientName: 'abcs', reason: 'physio');
   final UserService _userService = UserService();
-
-  List<ChatInfo> chatList = []; // List to store chat information
+  List<Patient> chatList = []; // List to store patient information
 
   @override
   void initState() {
     super.initState();
-    // Adding sample chat boxes to the chatList
-    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'John Doe', reason: 'Checkup'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
-    // chatList.add(ChatInfo(patientName: 'Jane Smith', reason: 'Prescription'));
+    fetchPatientData();
+  }
+
+  Future<void> fetchPatientData() async {
+    try {
+      String? userId = await AuthService().getUserId();
+      List<Patient> patients =
+          await PatientService().getPatientByUserId(userId!);
+
+      setState(() {
+        chatList = patients;
+        // print('entered');
+      });
+    } catch (e) {
+      // Handle exceptions during data fetch
+      // print('Error fetching patient data: $e');
+    }
   }
 
   @override
@@ -164,51 +128,69 @@ class _HomeBodyState extends State<HomeBody> {
                 ],
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 2.0, right: 2.0),
-              child: ListView.builder(
-                itemCount: chatList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 1.0),
-                      child: Container(
-                        decoration: BoxDecoration(
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 10.0, left: 10.0, right: 2.0),
+                  child: Text(
+                    'Your Chats',
+                    style: GoogleFonts.raleway(
+                      color: blackColor,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 1.0),
+                    child: ListView.builder(
+                      itemCount: chatList.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
                             color: color2,
-                            borderRadius: BorderRadius.circular(15.0)),
-                        child: ListTile(
-                          title: Text(
-                            chatList[index].patientName,
-                            style: GoogleFonts.raleway(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              chatList[index].form?.name ?? 'Loading',
+                              style: GoogleFonts.raleway(
                                 color: blackColor,
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                    patientId: chatList[index].patientId!,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          subtitle: Text(chatList[index].reason,
-                              style: GoogleFonts.raleway(
-                                color: collaborateAppBarBgColor,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 15,
-                              )),
-                          // Add other ListTile properties based on your ChatBox content
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatScreen()),
-                            );
-                            // Handle item tap if needed
-                          },
-                        ),
-                      ));
-                },
-              ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
 
       floatingActionButton: chatList.isEmpty
           ? null // If chatList is empty, no FAB
           : SizedBox(
-              width: 100,
-              height: 50,
+              width: 120,
+              height: 60,
               child: FloatingActionButton.extended(
                 onPressed: () {
                   Navigator.push(
@@ -220,37 +202,21 @@ class _HomeBodyState extends State<HomeBody> {
                 },
                 label: Container(
                   padding:
-                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                  child: Text(' Create Chat ',
-                      style: GoogleFonts.raleway(
-                          color: color4,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
+                      EdgeInsets.symmetric(vertical: 12.0, horizontal: 100),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text('Create Chat',
+                        style: GoogleFonts.raleway(
+                            color: color4,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
+                  ),
                 ),
                 backgroundColor: collaborateAppBarBgColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
               ),
             ),
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Your App Title',
-      theme: ThemeData(
-          // Your theme settings
-          ),
-      home: HomeBody(), // Use your HomeBody widget here
     );
   }
 }

@@ -38,6 +38,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
   void initState() {
     super.initState();
     customForm = widget.customForm;
+    print(customForm);
     nameController = TextEditingController(text: widget.customForm.name);
     ageController =
         TextEditingController(text: widget.customForm.age?.toString());
@@ -90,7 +91,9 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
         if (result['success'] == true) {
           // Login successful, navigate to the chat screen.
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => ChatScreen(),
+            builder: (context) => ChatScreen(
+              patientId: result['data']['patientId'],
+            ),
           ));
         } else {
           showDialog(
