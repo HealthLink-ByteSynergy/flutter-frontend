@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:healthlink/APIs.dart';
 import 'package:healthlink/Service/auth_service.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/patient_details.dart';
@@ -7,9 +8,31 @@ import 'package:http/http.dart' as http;
 class PatientService {
   String patientURL = 'http://10.0.2.2:5000/api/v1/patient';
 
-  Future<void> updatePatient(Patient patient) async {
-    // Implement logic to handle /api/v1/patient/update
-    // Use the 'patient' object as input
+  Future<Map<String, dynamic>> updatePatient(Patient patient) async {
+    Map<String, dynamic> result = {};
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.put(
+        Uri.parse('$patientURL/update/${patient.patientId}'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(patient.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        result['success'] = true;
+        result['data'] = jsonDecode(response.body);
+      } else {
+        result['success'] = false;
+        result['error'] = 'Failed to update patient: ${response.reasonPhrase}';
+      }
+    } catch (error) {
+      result['success'] = false;
+      result['error'] = 'Error occurred: $error';
+    }
+    return result;
   }
 
   Future<Map<String, dynamic>> savePatient(CustomForm form) async {
@@ -25,12 +48,10 @@ class PatientService {
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(
-            patient.toJson()), // Assuming 'toJson()' method in Patient class
+        body: jsonEncode(patient.toJson()),
       );
 
       if (response.statusCode == 200) {
-        // Successful response, store result in a map
         result['success'] = true;
         result['data'] = jsonDecode(response.body);
       } else {
@@ -47,20 +68,56 @@ class PatientService {
     return result;
   }
 
-  Future<Patient> getPatientById(String id) async {
-    return Patient();
-    // Implement logic to handle /api/v1/patient/id
-    // Use the 'id' string as input and return a 'Patient' object
+  Future<Patient?> getPatientById(String patientId) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.get(
+        Uri.parse(
+            '${API.baseURL}${API.patientEndpoint}/id/$patientId'), // Assuming the endpoint structure
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+          // Add other necessary headers here if required by your API
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic jsonResponse = json.decode(response.body);
+        final Patient patient = Patient.fromJson(jsonResponse);
+        return patient;
+      } else {
+        throw Exception('Failed to fetch patient');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
   }
 
-  Future<Patient> getPatientByUserId(String userId) async {
-    // Implement logic to handle /api/v1/patient/getByUserId
-    // Use the 'userId' string as input and return a 'Patient' object
-    return Patient();
+  Future<List<Patient>> getPatientByUserId(String userId) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.get(
+        Uri.parse('${API.baseURL}${API.patientEndpoint}/getByUserId/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = json.decode(response.body);
+        List<Patient> patients =
+            jsonResponse.map((json) => Patient.fromJson(json)).toList();
+        return patients;
+      } else {
+        print('why');
+        throw Exception('Failed to fetch patients');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
   }
 
-  Future<void> deletePatient(String id) async {
-    // Implement logic to handle /api/v1/patient/delete
-    // Use the 'id' string as input
-  }
+  Future<void> deletePatient(String id) async {}
 }
