@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
+import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
@@ -46,29 +47,6 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
     '20': 'General Surgery',
     '21': 'Plastic Surgery',
   };
-  // Map<String, String> specializationsMap = {
-  //   '1': 'General Medicine / Internal Medicine',
-  //   '2': 'Cardiology',
-  //   '3': 'Dermatology',
-  //   '4': 'Endocrinology',
-  //   '5': 'Gastroenterology',
-  //   '6': 'Hematology',
-  //   '7': 'Infectious Disease',
-  //   '8': 'Nephrology',
-  //   '9': 'Neurology',
-  //   '10': 'Obstetrics and Gynecology',
-  //   '11': 'Oncology',
-  //   '12': 'Ophthalmology',
-  //   '13': 'Orthopedics',
-  //   '14': 'Otolaryngology (ENT - Ear, Nose, Throat)',
-  //   '15': 'Pediatrics',
-  //   '16': 'Psychiatry',
-  //   '17': 'Pulmonology',
-  //   '18': 'Rheumatology',
-  //   '19': 'Urology',
-  //   '20': 'General Surgery',
-  //   '21': 'Plastic Surgery',
-  // };
 
   @override
   void dispose() {
@@ -91,18 +69,26 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
       _isLoading = true;
     });
 
+    String userId = await AuthService().getUserId() as String;
+    Doctor doctor = Doctor(
+        doctorId: '',
+        userId: userId,
+        specializations: _selectedspecializations,
+        availability: 'not available',
+        phoneNumber: _numberController.text,
+        licenseNumber: _licenseController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+        username: _usernameController.text);
+
     // signing up the user, by using the AuthMethods class
-    Map<String, dynamic> res = await AuthService().signUp(
-      _usernameController.text,
-      _emailController.text,
-      _passwordController.text,
-    );
+    Map<String, dynamic> res = await AuthService().signUpDoctor(doctor);
 
     setState(() {
       _isLoading = false;
     });
 
-    if (res['message'] == "success") {
+    if (res['success'] == true) {
       // navigate to the login screen after successful signup
       if (context.mounted) {
         Navigator.of(context).pushReplacement(
@@ -282,17 +268,6 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                     Icons.numbers,
                     color: color4,
                   ),
-                  // suffixIcon: IconButton(
-                  //   icon: Icon(
-                  //     isObscured ? Icons.visibility_off : Icons.visibility,
-                  //     color: color4,
-                  //   ),
-                  //   onPressed: () {
-                  //     setState(() {
-                  //       isObscured = !isObscured;
-                  //     });
-                  //   },
-                  // ),
                   labelText: 'Your Medical License Number',
                   labelStyle: const TextStyle(color: color4),
                   filled: true,
@@ -375,12 +350,12 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
                 height: height * 0.025,
               ),
               InkWell(
-                // onTap: signUp,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const HomeBody(),
-                  ),
-                ),
+                onTap: signUp,
+                // onTap: () => Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => const HomeBody(),
+                //   ),
+                // ),
                 child: Container(
                   height: height * 0.065,
                   width: double.infinity,

@@ -58,14 +58,14 @@ class _HomeBodyState extends State<HomeBody> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  FutureBuilder<String?>(
-                    future: _userService.getUsername(),
+                  FutureBuilder<Map<String, dynamic>?>(
+                    future: _userService.getUserDetails(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Text('Loading...'); // Placeholder while fetching
                       } else if (snapshot.hasData) {
                         return Text(
-                          'Welcome, ${snapshot.data}',
+                          'Welcome, ${snapshot.data!["username"]}',
                           style: GoogleFonts.raleway(
                             color: collaborateAppBarBgColor,
                             fontWeight: FontWeight.bold,

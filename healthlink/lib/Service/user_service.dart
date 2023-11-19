@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 class UserService {
   String userURL = 'http://10.0.2.2:5000/api/v1/user/getUserDetails';
 
-  Future<String?> getUsername() async {
+  Future<Map<String, dynamic>?> getUserDetails() async {
     try {
       final String? token = await AuthService().getToken();
-      print(token); // Fetch the authentication token
+      // print(token); // Fetch the authentication token
       if (token == null) {
         // Handle case where token is null, could indicate a login issue or token expiration
         return null;
@@ -23,11 +23,11 @@ class UserService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> userData = json.decode(response.body);
-        final String username = userData['username'];
+        // final String username = userData['username'];
 
         await AuthService().storeUserId(userData['id']);
         // print(username);
-        return username;
+        return userData;
       } else {
         // print('in else');
         // print(response.statusCode);

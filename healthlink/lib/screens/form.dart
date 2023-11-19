@@ -38,7 +38,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
   void initState() {
     super.initState();
     customForm = widget.customForm;
-    print(customForm);
+    // print(customForm);
     nameController = TextEditingController(text: widget.customForm.name);
     ageController =
         TextEditingController(text: widget.customForm.age?.toString());

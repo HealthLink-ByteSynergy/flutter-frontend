@@ -7,8 +7,10 @@ import 'package:healthlink/utils/widgets/summary_description.dart';
 
 class SummaryListWidget extends StatelessWidget {
   final List<Summary> summaries;
+  final String role;
 
-  const SummaryListWidget({super.key, required this.summaries});
+  const SummaryListWidget(
+      {super.key, required this.summaries, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +25,19 @@ class SummaryListWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: color2, borderRadius: BorderRadius.circular(20.0)),
           child: ListTile(
-            title: Text(
-              'Doctor ID: ${summary.doctorId}',
-              style: GoogleFonts.raleway(color: color4),
-            ),
+            title: role == 'PATIENT'
+                ? Text(
+                    'Doctor: ${summary.doctorId}',
+                    style: GoogleFonts.raleway(
+                        color: color4, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    'Patient: ${summary.patientId}',
+                    style: GoogleFonts.raleway(
+                        color: color4, fontWeight: FontWeight.bold),
+                  ),
             subtitle: Text(
-              'Timestamp: ${summary.timestamp.day}-${summary.timestamp.month}-${summary.timestamp.year}',
+              'Consultation Date: ${summary.timestamp.day}-${summary.timestamp.month}-${summary.timestamp.year}',
               style: GoogleFonts.raleway(color: color4),
             ),
             onTap: () {

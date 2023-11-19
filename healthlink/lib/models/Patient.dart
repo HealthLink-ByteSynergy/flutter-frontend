@@ -11,6 +11,7 @@ class Patient {
       'userEntity': {
         'id': userId,
       },
+      'name': form?.getName,
       'age': form?.getAge,
       'gender': form?.getGender,
       'phoneNumber': form?.getNumber,
@@ -24,4 +25,16 @@ class Patient {
       'drugsUseFrequency': form?.getDrugsUsedAndFrequency,
     };
   }
+
+  Patient({this.patientId, this.userId, this.form});
+
+  factory Patient.fromJson(Map<String, dynamic> json) {
+    return Patient(
+      patientId: json['patientId'],
+      userId: json['userEntity']['id'],
+      form: CustomForm.fromJson(json),
+    );
+  }
+
+  Patient.empty();
 }

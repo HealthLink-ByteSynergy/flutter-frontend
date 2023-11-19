@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:healthlink/models/Doctor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,7 +64,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> signUp(
+  Future<Map<String, dynamic>> signUpUser(
       String name, String email, String password) async {
     try {
       final response = await http.post(
@@ -90,8 +91,50 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> logout(String token) async {
+  Future<Map<String, dynamic>> signUpDoctor(Doctor doctor) async {
     try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/v1/user/doctorsignup'),
+        body: jsonEncode({
+          "userEntity": {
+            "id": '',
+            "username": doctor.username,
+            "email": doctor.email,
+            "password": doctor.password
+          },
+          "doctorEntity": {
+            "specialization": doctor.specializations,
+            "licenseNumber": doctor.licenseNumber,
+            "phoneNumber": doctor.phoneNumber,
+          }
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('doctor signup response');
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        // final Map<String, dynamic> responseData = json.decode(response.body);
+        // print(token);
+        final token = response.body;
+
+        print('token from doctor signup');
+        print(token);
+        await storeToken(token);
+
+        return {'success': true, 'token': token};
+      } else {
+        return {'success': false, 'message': 'Sign up failed'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Exception: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> logout() async {
+    try {
+      String? token = await getToken();
       final response = await http.get(
         Uri.parse(logoutURL),
         headers: {
@@ -100,7 +143,7 @@ class AuthService {
         },
       );
 
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         await removeToken();
         return {'success': true};

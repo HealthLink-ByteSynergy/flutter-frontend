@@ -35,7 +35,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
     });
 
     // signing up the user, by using the AuthMethods class
-    Map<String, dynamic> res = await AuthService().signUp(
+    Map<String, dynamic> res = await AuthService().signUpUser(
         _usernameController.text,
         _emailController.text,
         _passwordController.text);

@@ -216,6 +216,40 @@ class CustomForm {
     drugsUsedAndFrequency = null;
   }
 
+  // factory CustomForm.fromJson(Map<String, dynamic> json) {
+  //   return CustomForm(
+  //     name: json['name'],
+  //     age: json['age'],
+  //     number: json['number'],
+  //     gender: json['gender'],
+  //     height: json['height'],
+  //     weight: json['weight'],
+  //     medicalConditions: json['medicalConditions'],
+  //     medications: json['medications'],
+  //     recentSurgeryOrProcedure: json['recentSurgeryOrProcedure'],
+  //     allergies: json['allergies'],
+  //     doesSmokeCigarettes: json['doesSmokeCigarettes'],
+  //     smokingFrequency: json['smokingFrequency'],
+  //     drinkingFrequency: json['drinkingFrequency'],
+  //     drugsUsedAndFrequency: json['drugsUsedAndFrequency'],
+  //   );
+  // }
+
+  CustomForm.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    age = json['age'];
+    number = json['phoneNumber'];
+    gender = json['gender'];
+    height = json['height'];
+    weight = json['weight'];
+    medicalConditions = json['medicalCondition'];
+    medications = json['medication'];
+    recentSurgeryOrProcedure = json['surgeries'];
+    smokingFrequency = json['smokingFrequency'];
+    drinkingFrequency = json['drinkingFrequency'];
+    drugsUsedAndFrequency = json['drugsUseFrequency'];
+  }
+
   @override
   String toString() {
     return 'CustomForm{name: $name, age: $age, number: $number, gender: $gender, height: $height, weight: $weight, '

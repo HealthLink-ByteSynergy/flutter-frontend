@@ -207,7 +207,8 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
           ),
 
           Flexible(
-            child: SummaryListWidget(summaries: getDummySummaries()),
+            child: SummaryListWidget(
+                summaries: getDummySummaries(), role: "PATIENT"),
           )
           // Add more list items as needed
         ],

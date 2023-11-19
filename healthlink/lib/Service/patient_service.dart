@@ -104,7 +104,7 @@ class PatientService {
         },
       );
 
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         List<Patient> patients =

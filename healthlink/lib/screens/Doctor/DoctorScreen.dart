@@ -1,41 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/auth_service.dart';
+import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
+import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Summary.dart';
+import 'package:healthlink/screens/Doctor/doctor_settings.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
-class ChatScreen extends StatefulWidget {
-  final String patientId;
+class DoctorScreen extends StatefulWidget {
+  final String doctorId;
 
-  const ChatScreen({Key? key, required this.patientId}) : super(key: key);
+  const DoctorScreen({Key? key, required this.doctorId}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ChatScreenState createState() => _ChatScreenState();
+  _DoctorScreenState createState() => _DoctorScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _DoctorScreenState extends State<DoctorScreen> {
   final TextEditingController _messageController = TextEditingController();
   List<Message> messages = [];
   final MessageService _messageService = MessageService();
   bool _isInputEmpty = true;
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
+  Doctor? doctor;
 
   @override
   void initState() {
     super.initState();
+    _fetchDoctorDetails();
     _fetchMessages();
+  }
+
+  void _fetchDoctorDetails() async {
+    try {
+      String? userId = await AuthService().getUserId();
+      Doctor? fetchedDoctor = await DoctorService().getDoctorByUserId(userId!);
+
+      if (fetchedDoctor != null) {
+        setState(() {
+          doctor = fetchedDoctor;
+        });
+      }
+    } catch (e) {
+      print('Error fetching doctor details: $e');
+    }
   }
 
   void _fetchMessages() async {
     try {
       List<Message>? fetchedMessages =
-          await _messageService.getMessagesFromBot(widget.patientId);
+          await _messageService.getMessagesFromBot(widget.doctorId);
 
       if (fetchedMessages != null) {
         setState(() {
@@ -50,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String text) async {
     setState(() {
       _isInputEmpty = true;
-      _botReplied = true; // User has sent a message, waiting for bot reply
+      _botReplied = false; // User has sent a message, waiting for bot reply
     });
     _messageController.clear();
     Message newMessage = Message(
@@ -59,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
         receiverId: "",
         messageType: "",
         text: text,
-        senderId: widget.patientId,
+        senderId: widget.doctorId,
         timestamp: DateTime.now().toString(),
         summary: text
         // Add other necessary properties for the message
@@ -119,12 +140,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 DateTime timestamp = DateTime.parse(timestampString);
                 // Build the chat message using the actual message object
                 // print(DateTime.now());
-                return _buildChatMessage(message.text,
-                    message.senderId == widget.patientId, timestamp);
+                return _buildChatMessage(message.summary,
+                    message.senderId == widget.doctorId, timestamp);
               },
             ),
           ),
-          _buildInputField(),
+          // _buildInputField(),
         ],
       ),
     );
@@ -164,48 +185,48 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildInputField() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              autocorrect: true,
-              cursorColor: color4,
-              maxLines: null,
-              onChanged: (text) {
-                setState(() {
-                  _isInputEmpty = text.isEmpty;
-                });
-              },
-              decoration: InputDecoration(
-                labelText: 'Message',
-                counterStyle: const TextStyle(color: color4),
-                labelStyle: const TextStyle(
-                    color: color4), // Change to your preferred color
-                filled: true,
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                fillColor: collaborateAppBarBgColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide:
-                      const BorderSide(width: 0, style: BorderStyle.none),
-                ),
-              ),
-              style: GoogleFonts.raleway(
-                  color: color4, fontWeight: FontWeight.w500),
-              keyboardType: TextInputType.text,
-              enabled: _botReplied, // Disable input if the bot hasn't replied
-            ),
-          ),
-          const SizedBox(width: 8.0),
-          _buildSendButton(),
-        ],
-      ),
-    );
-  }
+  // Widget _buildInputField() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(8.0),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: TextField(
+  //             controller: _messageController,
+  //             autocorrect: true,
+  //             cursorColor: color4,
+  //             maxLines: null,
+  //             onChanged: (text) {
+  //               setState(() {
+  //                 _isInputEmpty = text.isEmpty;
+  //               });
+  //             },
+  //             decoration: InputDecoration(
+  //               labelText: 'Message',
+  //               counterStyle: const TextStyle(color: color4),
+  //               labelStyle: const TextStyle(
+  //                   color: color4), // Change to your preferred color
+  //               filled: true,
+  //               floatingLabelBehavior: FloatingLabelBehavior.never,
+  //               fillColor: collaborateAppBarBgColor,
+  //               border: OutlineInputBorder(
+  //                 borderRadius: BorderRadius.circular(30.0),
+  //                 borderSide:
+  //                     const BorderSide(width: 0, style: BorderStyle.none),
+  //               ),
+  //             ),
+  //             style: GoogleFonts.raleway(
+  //                 color: color4, fontWeight: FontWeight.w500),
+  //             keyboardType: TextInputType.text,
+  //             enabled: _botReplied, // Disable input if the bot hasn't replied
+  //           ),
+  //         ),
+  //         const SizedBox(width: 8.0),
+  //         _buildSendButton(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildDateSeparator(DateTime messageTime) {
     return Container(
@@ -253,7 +274,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'Ramsai Koushik Polisetti',
+                    doctor?.username ?? 'Username not available',
                     style: GoogleFonts.raleway(
                       color: color4,
                       fontSize: 25,
@@ -269,8 +290,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            SettingsScreen(patientId: widget.patientId),
+                        builder: (context) => DoctorSettingsScreen(
+                            doctorId: doctor?.doctorId ?? 'N/A'),
                       ),
                     );
                   },
@@ -281,7 +302,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
           Center(
             child: Text(
-              'Doctor Consultation Summaries',
+              'Your Consultation Summaries',
               style: GoogleFonts.raleway(
                   color: collaborateAppBarBgColor,
                   fontWeight: FontWeight.w600,
@@ -299,7 +320,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SearchScreen(
-                      summaries: getDummySummaries(), role: 'PATIENT'),
+                      summaries: getDummySummaries(), role: 'DOCTOR'),
                 ),
               );
             },
@@ -318,7 +339,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icon(Icons.search, color: Colors.white),
                   SizedBox(width: 8.0),
                   Text(
-                    'Search Doctor Summaries',
+                    'Search Your Consultaions',
                     style: TextStyle(color: Colors.white, fontSize: 17),
                   ),
                 ],
@@ -328,7 +349,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
           Flexible(
             child: SummaryListWidget(
-                summaries: getDummySummaries(), role: 'PATIENT'),
+                summaries: getDummySummaries(), role: "DOCTOR"),
           )
           // Add more list items as needed
         ],
@@ -340,96 +361,96 @@ class _ChatScreenState extends State<ChatScreen> {
     return [
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
       ),
       Summary(
         summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
+        doctorId: '123',
+        patientId: 'Doctor1',
         summaryText: 'This is the first summary text.',
         prescriptionId: 'Prescription1',
         timestamp: DateTime.now(),
       ),
       Summary(
         summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
+        doctorId: '123',
+        patientId: 'Doctor2',
         summaryText: 'This is the second summary text.',
         prescriptionId: 'Prescription2',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
@@ -437,27 +458,4 @@ class _ChatScreenState extends State<ChatScreen> {
       // Add more dummy summaries as needed
     ];
   }
-
-  // void _sendMessage(String text) {
-  //   setState(() {
-  //     _isInputEmpty = true;
-  //     _botReplied = false; // User has sent a message, waiting for bot reply
-  //   });
-  //   _messageController.clear();
-
-  //   // Simulate bot's reply after a delay (you can replace this with actual logic)
-  //   Future.delayed(const Duration(seconds: 2), () {
-  //     setState(() {
-  //       _botReplied = true; // Bot has replied, enable input and send button
-  //     });
-  //     // Simulate displaying bot's reply
-  //     _buildChatMessage('Bot reply', false, DateTime.now());
-  //   });
-  // }
 }
-
-// void main() {
-//   runApp(const MaterialApp(
-//     home: ChatScreen(),
-//   ));
-// }

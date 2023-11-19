@@ -51,6 +51,7 @@ class UserDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    print(user);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

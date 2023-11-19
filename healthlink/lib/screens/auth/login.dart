@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/doctor_service.dart';
+import 'package:healthlink/Service/user_service.dart';
+import 'package:healthlink/screens/Doctor/DoctorScreen.dart';
 import 'package:healthlink/screens/auth/role_signup.dart';
 import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart';
@@ -20,26 +23,114 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _isObscured = true;
 
+  // Future<void> _loginUser() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+
+  //   try {
+  //     final Map<String, dynamic> result = await AuthService()
+  //         .login(_emailController.text, _passwordController.text);
+
+  //     if (result['success'] == true) {
+  //       // Login successful, navigate to the home screen.
+  //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //         builder: (context) => HomeBody(),
+  //       ));
+
+  //     } else {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: const Text('Login Failed'),
+  //           content: Text(result['message']),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: const Text('OK'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   } catch (error) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: const Text('Login Failed'),
+  //         content: Text(error.toString()),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: const Text('OK'),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
+
   Future<void> _loginUser() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final Map<String, dynamic> result = await AuthService()
-          .login(_emailController.text, _passwordController.text);
+      final Map<String, dynamic> result = await AuthService().login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
       if (result['success'] == true) {
-        // Login successful, navigate to the home screen.
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeBody(),
-        ));
+        // Login successful, fetch user details
+        final userDetails = await UserService().getUserDetails();
+
+        if (userDetails != null) {
+          // Check the role of the user
+          if (userDetails['role'] == 'DOCTOR') {
+            // Fetch doctor details if the user is a doctor
+            final doctorDetails =
+                await DoctorService().getDoctorByUserId(userDetails['id']);
+            if (doctorDetails != null) {
+              // Navigate to DoctorScreen with doctor details
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) =>
+                    DoctorScreen(doctorId: doctorDetails.doctorId),
+              ));
+            }
+          } else {
+            // For other roles, navigate to HomeBody
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomeBody(),
+            ));
+          }
+        } else {
+          // Handle null user details
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text('User details not found..null user'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       } else {
+        // Handle login failure
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Login Failed'),
-            content: Text(result['message']),
+            title: const Text('Error'),
+            content: const Text('User details not found..login failure'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -50,11 +141,13 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (error) {
+      // Handle login error
+      print(error);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Login Failed'),
-          content: Text(error.toString()),
+          title: const Text('Error'),
+          content: const Text('User details not found...login error'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

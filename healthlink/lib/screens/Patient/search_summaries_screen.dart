@@ -5,8 +5,9 @@ import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class SearchScreen extends StatefulWidget {
   final List<Summary> summaries;
+  final String role;
 
-  const SearchScreen({super.key, required this.summaries});
+  const SearchScreen({super.key, required this.summaries, required this.role});
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -14,11 +15,19 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late List<Summary> filteredSummaries;
+  late TextEditingController searchController; // Add this line
 
   @override
   void initState() {
     super.initState();
     filteredSummaries = List.from(widget.summaries);
+    searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose(); // Dispose of the controller when done
+    super.dispose();
   }
 
   void _filterSummaries(String searchText) {
@@ -49,13 +58,15 @@ class _SearchScreenState extends State<SearchScreen> {
               borderRadius: BorderRadius.circular(30), // Rounded corners
             ),
             child: TextField(
+              controller: searchController,
               onChanged: _filterSummaries,
               style: const TextStyle(
                   color: collaborateAppBarBgColor), // Text color
               decoration: InputDecoration(
-                hintText: 'Search Doctor Summaries',
+                hintText: 'Search Summaries',
                 hintStyle: const TextStyle(
-                    color: collaborateAppBarBgColor), // Hint text color
+                  color: color4,
+                ), // Hint text color
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.only(left: 30, top: 15),
                 prefixIcon:
@@ -66,6 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       const Icon(Icons.clear, color: collaborateAppBarBgColor),
                   onPressed: () {
                     // Clear the search text and reset the list
+                    searchController.clear();
                     _filterSummaries('');
                   },
                 ),
@@ -73,6 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
         ),
-        body: SummaryListWidget(summaries: filteredSummaries));
+        body:
+            SummaryListWidget(summaries: filteredSummaries, role: widget.role));
   }
 }
