@@ -93,8 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Check the role of the user
           if (userDetails['role'] == 'DOCTOR') {
             // Fetch doctor details if the user is a doctor
-            final doctorDetails =
-                await DoctorService().getDoctorByUserId(userDetails['id']);
+            final doctorDetails = await DoctorService().getDoctorByUserId();
             if (doctorDetails != null) {
               // Navigate to DoctorScreen with doctor details
               Navigator.of(context).pushReplacement(MaterialPageRoute(

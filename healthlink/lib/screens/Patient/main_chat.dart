@@ -25,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isInputEmpty = true;
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
+  bool isDoctorButtonVisible = true;
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (fetchedMessages != null) {
         setState(() {
           messages = fetchedMessages;
+          _botReplied = true;
         });
       }
     } catch (e) {
@@ -50,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String text) async {
     setState(() {
       _isInputEmpty = true;
-      _botReplied = true; // User has sent a message, waiting for bot reply
+      _botReplied = false; // User has sent a message, waiting for bot reply
     });
     _messageController.clear();
     Message newMessage = Message(
@@ -69,8 +71,15 @@ class _ChatScreenState extends State<ChatScreen> {
       newMessage.previousMessageId = messages[messages.length - 1].messageId;
     }
 
+    // print(
+    //     'patientId and sender id- ${newMessage.senderId == widget.patientId}}');
+
     setState(() {
       messages.add(newMessage);
+      // print('sender id and patient id');
+      // print(newMessage.senderId);
+      // print('patientId');
+      // print(widget.patientId);
     });
 
     try {
@@ -103,6 +112,37 @@ class _ChatScreenState extends State<ChatScreen> {
             },
           ),
         ),
+        actions: <Widget>[
+          Visibility(
+            visible: true,
+            child: TextButton(
+              onPressed: () {
+                // Perform actions when the doctor button is pressed
+                // For example, change the color or toggle visibility
+                setState(() {
+                  isDoctorButtonVisible = false;
+                });
+                // Change visibility of the button
+                // You can add more actions here
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDoctorButtonVisible ? color4 : Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Doctor', // Text for the doctor button
+                  style: TextStyle(
+                      color: isDoctorButtonVisible
+                          ? collaborateAppBarBgColor
+                          : color4,
+                      fontSize: 20), // Adjust text color as needed
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       drawer: _buildDrawer(),
       body: Column(
@@ -119,8 +159,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 DateTime timestamp = DateTime.parse(timestampString);
                 // Build the chat message using the actual message object
                 // print(DateTime.now());
+                // print('pat-${widget.patientId}, mes-${message.senderId}');
                 return _buildChatMessage(message.text,
-                    message.senderId == widget.patientId, timestamp);
+                    message.senderId != widget.patientId, timestamp);
               },
             ),
           ),
@@ -197,7 +238,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: GoogleFonts.raleway(
                   color: color4, fontWeight: FontWeight.w500),
               keyboardType: TextInputType.text,
-              enabled: _botReplied, // Disable input if the bot hasn't replied
+              // enabled: _botReplied, // Disable input if the bot hasn't replied
             ),
           ),
           const SizedBox(width: 8.0),

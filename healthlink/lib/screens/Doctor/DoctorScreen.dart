@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/auth_service.dart';
@@ -40,8 +42,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
 
   void _fetchDoctorDetails() async {
     try {
-      String? userId = await AuthService().getUserId();
-      Doctor? fetchedDoctor = await DoctorService().getDoctorByUserId(userId!);
+      // String? userId = await AuthService().getUserId();
+      Doctor? fetchedDoctor = await DoctorService().getDoctorByUserId();
 
       if (fetchedDoctor != null) {
         setState(() {

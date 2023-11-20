@@ -28,19 +28,19 @@ class SummaryDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Doctor: ${summary.doctorName}',
+            Text('Doctor: ${summary.doctor}',
                 style: GoogleFonts.raleway(
                     color: collaborateAppBarBgColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            Text('Patient: ${summary.patientName}',
+            Text('Patient: ${summary.patient}',
                 style: GoogleFonts.raleway(
                     color: collaborateAppBarBgColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            Text('Date: ${_formatDate(summary.timestamp)}',
+            Text('Date: ${_formatDate(DateTime.parse(summary.timestamp))}',
                 style: GoogleFonts.raleway(
                     color: collaborateAppBarBgColor,
                     fontSize: 16,
@@ -52,7 +52,7 @@ class SummaryDetailsScreen extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            Text(summary.summaryText,
+            Text(summary.text,
                 style: GoogleFonts.raleway(
                     color: collaborateAppBarBgColor, fontSize: 16)),
             SizedBox(height: 20),

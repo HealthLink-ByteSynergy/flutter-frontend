@@ -23,8 +23,8 @@ class Message {
     return Message(
         messageId: json['messageId'],
         previousMessageId: json['previousMessageId'],
-        senderId: json["recPatientEntity"]['patientId'],
-        receiverId: json['senPatientEntity']['patientId'],
+        senderId: json["senPatientEntity"]['patientId'],
+        receiverId: json['recPatientEntity']['patientId'],
         text: json['text'],
         messageType: json['messageType'],
         timestamp: json['date'],

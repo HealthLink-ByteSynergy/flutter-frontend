@@ -4,7 +4,7 @@ class API {
   static const String userEndpoint = '/user'; // Example user endpoint
   static const String patientEndpoint = '/patient';
   static const String doctorEndpoint = '/doctor';
-  static const String summaryEndpoint = '/summary';
+  static const String summaryEndpoint = '/summaries';
   static const String prescriptionEndpoint = '/prescription';
   static const String messageEndpoint = '/messages';
   static const String meetingEndpoint = '/meeting';

@@ -42,13 +42,13 @@ class SummaryListWidget extends StatelessWidget {
             ),
             onTap: () {
               // Navigate to a new screen to display detailed summary information
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SummaryDetailsScreen(
-                      summary: generateDetailedSummary(summary)),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => SummaryDetailsScreen(
+              //         summary: generateDetailedSummary(summary)),
+              //   ),
+              // );
             },
           ),
         );

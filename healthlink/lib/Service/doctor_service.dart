@@ -7,11 +7,12 @@ import 'package:http/http.dart' as http;
 class DoctorService {
   String doctorURL = API.baseURL + API.doctorEndpoint;
 
-  Future<Doctor?> getDoctorByUserId(String userId) async {
+  Future<Doctor?> getDoctorByUserId() async {
     try {
       // AuthService().removeToken();
       // String jwtToken = '';
       final String? jwtToken = await AuthService().getToken();
+      final String? userId = await AuthService().getUserId();
       final response = await http.get(
         Uri.parse(
             '$doctorURL/userid/$userId'), // Assuming the endpoint structure
