@@ -40,6 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (fetchedMessages != null) {
         setState(() {
           messages = fetchedMessages;
+          _botReplied = true;
         });
       }
     } catch (e) {
@@ -50,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String text) async {
     setState(() {
       _isInputEmpty = true;
-      _botReplied = true; // User has sent a message, waiting for bot reply
+      _botReplied = false; // User has sent a message, waiting for bot reply
     });
     _messageController.clear();
     Message newMessage = Message(
@@ -69,8 +70,15 @@ class _ChatScreenState extends State<ChatScreen> {
       newMessage.previousMessageId = messages[messages.length - 1].messageId;
     }
 
+    // print(
+    //     'patientId and sender id- ${newMessage.senderId == widget.patientId}}');
+
     setState(() {
       messages.add(newMessage);
+      // print('sender id and patient id');
+      // print(newMessage.senderId);
+      // print('patientId');
+      // print(widget.patientId);
     });
 
     try {
@@ -119,8 +127,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 DateTime timestamp = DateTime.parse(timestampString);
                 // Build the chat message using the actual message object
                 // print(DateTime.now());
+                // print('pat-${widget.patientId}, mes-${message.senderId}');
                 return _buildChatMessage(message.text,
-                    message.senderId == widget.patientId, timestamp);
+                    message.senderId != widget.patientId, timestamp);
               },
             ),
           ),
@@ -197,7 +206,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: GoogleFonts.raleway(
                   color: color4, fontWeight: FontWeight.w500),
               keyboardType: TextInputType.text,
-              enabled: _botReplied, // Disable input if the bot hasn't replied
+              // enabled: _botReplied, // Disable input if the bot hasn't replied
             ),
           ),
           const SizedBox(width: 8.0),
