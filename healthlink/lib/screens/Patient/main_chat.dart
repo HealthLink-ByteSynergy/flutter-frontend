@@ -25,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isInputEmpty = true;
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
+  bool isDoctorButtonVisible = true;
 
   @override
   void initState() {
@@ -111,6 +112,37 @@ class _ChatScreenState extends State<ChatScreen> {
             },
           ),
         ),
+        actions: <Widget>[
+          Visibility(
+            visible: true,
+            child: TextButton(
+              onPressed: () {
+                // Perform actions when the doctor button is pressed
+                // For example, change the color or toggle visibility
+                setState(() {
+                  isDoctorButtonVisible = false;
+                });
+                // Change visibility of the button
+                // You can add more actions here
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDoctorButtonVisible ? color4 : Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Doctor', // Text for the doctor button
+                  style: TextStyle(
+                      color: isDoctorButtonVisible
+                          ? collaborateAppBarBgColor
+                          : color4,
+                      fontSize: 20), // Adjust text color as needed
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       drawer: _buildDrawer(),
       body: Column(
