@@ -1,32 +1,20 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/models/Medicine.dart';
+import 'package:healthlink/models/Prescription.dart';
 import 'package:healthlink/utils/colors.dart';
 
-class Medicine {
-  final String name;
-  final String dosage;
-  final String frequency;
-
-  Medicine({required this.name, required this.dosage, required this.frequency});
-}
-
-class Prescription {
-  String doctorId;
-  String patientId;
-  List<Medicine> medicines;
-  String generalHabits;
-
-  Prescription({
-    required this.doctorId,
-    required this.patientId,
-    required this.medicines,
-    required this.generalHabits,
-  });
-}
-
 class PrescriptionScreen extends StatefulWidget {
+  final String patientId;
+  final String doctorId;
+  final Prescription currentPrescription;
+
+  const PrescriptionScreen(
+      {Key? key,
+      required this.doctorId,
+      required this.patientId,
+      required this.currentPrescription})
+      : super(key: key);
   @override
   _PrescriptionScreenState createState() => _PrescriptionScreenState();
 }
@@ -38,6 +26,25 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
   TextEditingController habitsController = TextEditingController();
 
   List<Medicine> medicines = [];
+
+  @override
+  void initState() {
+    super.initState();
+    initFields();
+  }
+
+  void initFields() {
+    medicineNameController.text = '';
+    dosageController.text = '';
+    frequencyController.text = '';
+    habitsController.text = widget.currentPrescription.generalHabits;
+
+    // You might need to iterate through existing medicines in the prescription
+    // and update the UI accordingly
+    setState(() {
+      medicines = widget.currentPrescription.medicines;
+    });
+  }
 
   void _showDeleteMedicineDialog(int index) {
     showDialog(
@@ -280,12 +287,41 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 ),
               ),
               SizedBox(height: 50.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle saving prescription
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: blackColor),
-                child: Text('Save Prescription'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceEvenly, // Adjust the alignment as needed
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle cancel action
+                      Navigator.pop(
+                          context); // Close the dialog without returning any data
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            blackColor), // Change the color as needed
+                    child: Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle saving prescription
+                      Prescription prescription = Prescription(
+                        doctorId:
+                            widget.patientId, // Replace with actual doctor ID
+                        patientId:
+                            widget.patientId, // Replace with actual patient ID
+                        medicines: medicines,
+                        generalHabits: habitsController.text,
+                      );
+
+                      // Now you can send the prescription data back to the previous screen
+                      Navigator.pop(context, prescription);
+                    },
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: blackColor),
+                    child: Text('Save'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -293,29 +329,29 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return PrescriptionScreen();
-              },
-            );
-          },
-          child: Text('Open Prescription'),
-        ),
-      ),
-    );
-  }
-}
+// class HomeScreen extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Home'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () {
+//             showDialog(
+//               context: context,
+//               builder: (BuildContext context) {
+//                 return PrescriptionScreen();
+//               },
+//             );
+//           },
+//           child: Text('Open Prescription'),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // Existing classes and imports remain unchanged
 
@@ -329,8 +365,8 @@ class HomeScreen extends StatelessWidget {
 //   }
 // }
 
-void main() {
-  runApp(MaterialApp(
-    home: HomeScreen(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     home: HomeScreen(),
+//   ));
+// }

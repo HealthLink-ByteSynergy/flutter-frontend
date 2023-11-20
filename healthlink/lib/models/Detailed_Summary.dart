@@ -1,17 +1,40 @@
+import 'package:healthlink/models/Doctor.dart';
+import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Prescription.dart';
 
 class DetailedSummary {
-  final String doctorName;
-  final String patientName;
+  final Doctor doctor;
+  final Patient patient;
   final Prescription prescription;
-  final String summaryText;
-  final DateTime timestamp;
+  final String text;
+  final String timestamp;
 
   DetailedSummary({
-    required this.doctorName,
-    required this.patientName,
+    required this.doctor,
+    required this.patient,
     required this.prescription,
-    required this.summaryText,
+    required this.text,
     required this.timestamp,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'doctor': doctor.toJson(),
+      'patient': patient.toJson(),
+      'prescription': prescription.toJson(),
+      'text': text,
+      'timestamp': timestamp,
+    };
+  }
+
+  factory DetailedSummary.fromJson(Map<String, dynamic> json) {
+    return DetailedSummary(
+      doctor: Doctor.fromJson(json['doctor']),
+      patient: Patient.fromJson(json['patient']),
+      prescription: Prescription.fromJson(
+          json['prescription'], json['doctor'], json['patient']),
+      text: json['text'],
+      timestamp: json['timestamp'],
+    );
+  }
 }

@@ -80,27 +80,6 @@ class DoctorSettingsScreen extends StatelessWidget {
                   subtitle: Text(
                       doctorDetails.email), // Replace '...' with actual email
                 ),
-
-                // _buildSubheading('Professional Info'),
-                // ListTile(
-                //   title: const Text('View User Details'),
-                //   onTap: () {
-                //     // Handle the click on 'View User Details'
-                //     // For example, navigate to another screen or show a dialog
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) =>
-
-                //       ),
-                //     );
-                //   },
-                // ),
-                // Inside the _buildSubheading method, add a new case for License Number
-// Add a ListTile for License Number under Account section
-
-// Add another ListTile for Phone Number under Account section
-
                 ListTile(
                   leading: const Icon(
                     Icons.phone_outlined,
@@ -225,8 +204,8 @@ class DoctorSettingsScreen extends StatelessWidget {
   Future<Doctor?> _fetchDoctorDetails(String doctorId) async {
     try {
       final doctorService = DoctorService();
-      final userId = await AuthService().getUserId();
-      Future<Doctor?> doctor = doctorService.getDoctorByUserId(userId!);
+      // final userId = await AuthService().getUserId();
+      Future<Doctor?> doctor = doctorService.getDoctorByUserId();
       return doctor;
     } catch (e) {
       throw Exception('Error fetching patient details: $e');

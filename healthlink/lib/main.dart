@@ -54,8 +54,8 @@ class AuthenticationWrapper extends StatelessWidget {
                   if (userDetails != null) {
                     if (userDetails['role'] == 'DOCTOR') {
                       return FutureBuilder(
-                        future: DoctorService().getDoctorByUserId(
-                            userDetails['id']), // Query Doctor using userId
+                        future: DoctorService()
+                            .getDoctorByUserId(), // Query Doctor using userId
                         builder: (context, doctorSnapshot) {
                           if (doctorSnapshot.connectionState ==
                               ConnectionState.waiting) {

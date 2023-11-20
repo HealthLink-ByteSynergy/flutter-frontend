@@ -40,8 +40,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
 
   void _fetchDoctorDetails() async {
     try {
-      String? userId = await AuthService().getUserId();
-      Doctor? fetchedDoctor = await DoctorService().getDoctorByUserId(userId!);
+      // String? userId = await AuthService().getUserId();
+      Doctor? fetchedDoctor = await DoctorService().getDoctorByUserId();
 
       if (fetchedDoctor != null) {
         setState(() {
