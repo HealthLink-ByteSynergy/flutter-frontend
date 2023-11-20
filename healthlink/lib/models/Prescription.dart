@@ -19,7 +19,7 @@ class Prescription {
     return {
       'prescriptionId': '',
       'genralHabits': generalHabits,
-      'medicines': medicines.toString()
+      'medicines': ''
     };
   }
 

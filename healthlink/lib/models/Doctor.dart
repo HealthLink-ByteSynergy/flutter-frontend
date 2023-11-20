@@ -31,7 +31,7 @@ class Doctor {
     return Doctor(
       doctorId: json['doctorId'] ?? '',
       userId: json['userEntity']['id'] ?? '',
-      specializations: ['j'],
+      specializations: json['specialization'].split(','),
       // convertCommaSeparatedStringToList(json['specialization']),
       availability: json['isAvailable'] ?? '',
       licenseNumber: json['licenseNumber'] ?? '',
@@ -40,13 +40,6 @@ class Doctor {
       username: json['userEntity']['username'] ?? '',
       password: json['userEntity']['password'] ?? '',
     );
-  }
-
-  List<String> convertCommaSeparatedStringToList(String jsonString) {
-    // Split the string by commas and convert it into a list
-    List<String> values = jsonString.split(',');
-
-    return values;
   }
 
   Map<String, dynamic> toJson() {

@@ -25,7 +25,7 @@ class DoctorService {
       // print(response.body);
       if (response.statusCode == 200) {
         final dynamic jsonResponse = json.decode(response.body);
-        // print(jsonResponse);
+        print(jsonResponse);
         final Doctor doctor = Doctor.fromJson(jsonResponse);
         // print(doctor.username);
         return doctor;
