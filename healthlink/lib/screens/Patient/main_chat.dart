@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/message_service.dart';
+import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/models/Message.dart';
+import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
@@ -32,6 +34,21 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _fetchMessages();
   }
+
+  // void _fetchPatientDetails() async {
+  //   try {
+  //     // String? userId = await AuthService().getUserId();
+  //     Patient? fetchedDoctor = await PatientService().getPatientByUserId();
+
+  //     if (fetchedDoctor != null) {
+  //       setState(() {
+  //         doctor = fetchedDoctor;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching doctor details: $e');
+  //   }
+  // }
 
   void _fetchMessages() async {
     try {
@@ -113,6 +130,9 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         actions: <Widget>[
+          IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.home_filled)),
           Visibility(
             visible: true,
             child: TextButton(
@@ -294,7 +314,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'Ramsai Koushik Polisetti',
+                    'Koushik',
                     style: GoogleFonts.raleway(
                       color: color4,
                       fontSize: 25,

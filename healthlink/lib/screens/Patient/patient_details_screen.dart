@@ -32,45 +32,45 @@ class UserDetailsScreen extends StatelessWidget {
               _buildDetail('Weight', user.getWeight.toString()),
               _buildDetail('Medical Conditions', user.getMedicalConditions),
               _buildDetail('Medications', user.getMedications),
-              _buildDetail('Recent Surgery or Procedure',
-                  user.getRecentSurgeryOrProcedure),
+              // _buildDetail('Recent Surgery or Procedure',
+              // user.getRecentSurgeryOrProcedure),
               _buildDetail('Allergies', user.getAllergies),
               _buildDetail('Smoking Frequency', user.getSmokingFrequency),
               _buildDetail('Drinking Frequency', user.getDrinkingFrequency),
               _buildDetail(
                   'Drugs Used and Frequency', user.getDrugsUsedAndFrequency),
               const SizedBox(height: 30),
-              Container(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: collaborateAppBarBgColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20.0), // Rounded corners
-                    ),
-                  ),
-                  onPressed: () {
-                    print(user);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MedicalInfoForm(customForm: user),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Edit',
-                      style: GoogleFonts.raleway(
-                          color: color4,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 25),
-                    ),
-                  ),
-                ),
-              ),
+              // Container(
+              //   alignment: Alignment.bottomCenter,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: collaborateAppBarBgColor,
+              //       shape: RoundedRectangleBorder(
+              //         borderRadius:
+              //             BorderRadius.circular(20.0), // Rounded corners
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       print(user);
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => MedicalInfoForm(customForm: user),
+              //         ),
+              //       );
+              //     },
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(8.0),
+              //       child: Text(
+              //         'Edit',
+              //         style: GoogleFonts.raleway(
+              //             color: color4,
+              //             fontWeight: FontWeight.w400,
+              //             fontSize: 25),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

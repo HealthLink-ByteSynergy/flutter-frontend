@@ -603,7 +603,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                     style:
                         ElevatedButton.styleFrom(backgroundColor: blackColor),
                     onPressed: () {
-                      customForm.reset();
+                      // customForm.reset();
                       Navigator.pop(context);
                     }, // Submit button
                     child: Text('Cancel',

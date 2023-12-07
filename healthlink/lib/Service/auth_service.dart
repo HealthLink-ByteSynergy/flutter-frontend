@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String baseURL = 'http://10.0.2.2:5000/api/v1';
+  static const String baseURL = 'http://127.0.0.1:5000/api/v1';
   static const String loginURL = '$baseURL/user/login';
   static const String signupURL = '$baseURL/user/signup';
   static const String logoutURL = '$baseURL/user/logout';
@@ -68,7 +68,7 @@ class AuthService {
       String name, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/v1/user/signup'),
+        Uri.parse('http://127.0.0.1:5000/api/v1/user/signup'),
         body: jsonEncode(
             {"username": name, "email": email, "password": password}),
         headers: {'Content-Type': 'application/json'},
@@ -94,7 +94,7 @@ class AuthService {
   Future<Map<String, dynamic>> signUpDoctor(Doctor doctor) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/v1/user/doctorsignup'),
+        Uri.parse('http://127.0.0.1:5000/api/v1/user/doctorsignup'),
         body: jsonEncode({
           "userEntity": {
             "id": '',
