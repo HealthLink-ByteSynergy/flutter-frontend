@@ -6,7 +6,7 @@ import 'package:healthlink/models/patient_details.dart';
 import 'package:http/http.dart' as http;
 
 class PatientService {
-  String patientURL = 'http://localhost:5000/api/v1/patient';
+  String patientURL = 'http://10.0.2.2:5000/api/v1/patient';
 
   Future<Map<String, dynamic>> updatePatient(Patient patient) async {
     Map<String, dynamic> result = {};

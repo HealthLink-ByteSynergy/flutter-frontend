@@ -1,6 +1,6 @@
 class API {
   static const String baseURL =
-      'http://localhost:5000/api/v1'; // Replace with your backend URL
+      'http://10.0.2.2:5000/api/v1'; // Replace with your backend URL
   static const String userEndpoint = '/user'; // Example user endpoint
   static const String patientEndpoint = '/patient';
   static const String doctorEndpoint = '/doctor';

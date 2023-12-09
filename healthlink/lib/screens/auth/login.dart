@@ -78,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = true;
     });
+    print("entered login");
 
     try {
       final Map<String, dynamic> result = await AuthService().login(
