@@ -21,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
+              iconTheme: IconThemeData(color: Colors.white),
               backgroundColor: collaborateAppBarBgColor,
               title: Text(
                 'HealthLink',
@@ -48,6 +49,7 @@ class SettingsScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              iconTheme: IconThemeData(color: Colors.white),
               backgroundColor: collaborateAppBarBgColor,
               title: Text(
                 'HealthLink',
@@ -71,20 +73,20 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10.0),
-                _buildSubheading('Main Account'),
+                _buildSubheading('Account'),
                 ListTile(
                   leading: const Icon(
-                    Icons.email_outlined,
+                    Icons.call_outlined,
                     color: collaborateAppBarBgColor,
                   ),
                   title: Text(
-                    'Email',
+                    'Phone Numbler',
                     style: GoogleFonts.raleway(
                         color: collaborateAppBarBgColor,
                         fontWeight: FontWeight.bold),
                   ),
-                  subtitle: const Text(
-                      'koushikpolisetty@gmail.com'), // Replace '...' with actual email
+                  subtitle:
+                      Text(patientDetails.form?.number ?? "Not availabale"),
                 ),
                 const SizedBox(height: 10.0),
                 _buildSubheading('Patient Info'),

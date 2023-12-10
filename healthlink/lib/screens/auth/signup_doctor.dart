@@ -69,10 +69,10 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
       _isLoading = true;
     });
 
-    String userId = await AuthService().getUserId() as String;
+    // String userId = await AuthService().getUserId() as String;
     Doctor doctor = Doctor(
         doctorId: '',
-        userId: userId,
+        userId: '',
         specializations: _selectedspecializations,
         availability: 'not available',
         phoneNumber: _numberController.text,

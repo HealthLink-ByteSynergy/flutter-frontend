@@ -13,6 +13,7 @@ class UserDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text('${user.name} Details',
             style: GoogleFonts.raleway(color: color4)),

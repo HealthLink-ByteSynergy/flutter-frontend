@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
+import 'package:healthlink/screens/Temporary_Chat/consultation_chat_screen.dart';
+import 'package:healthlink/screens/home.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class ChatScreen extends StatefulWidget {
   final String patientId;
+  final String patientUserId;
 
-  const ChatScreen({Key? key, required this.patientId}) : super(key: key);
+  const ChatScreen(
+      {Key? key, required this.patientId, required this.patientUserId})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -28,27 +34,30 @@ class _ChatScreenState extends State<ChatScreen> {
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
   bool isDoctorButtonVisible = true;
+  Patient? patient;
 
   @override
   void initState() {
     super.initState();
+    _fetchPatientDetails();
     _fetchMessages();
   }
 
-  // void _fetchPatientDetails() async {
-  //   try {
-  //     // String? userId = await AuthService().getUserId();
-  //     Patient? fetchedDoctor = await PatientService().getPatientByUserId();
+  void _fetchPatientDetails() async {
+    try {
+      // String? userId = await AuthService().getUserId();
+      Patient? fetchedPatient =
+          await PatientService().getPatientById(this.widget.patientId);
 
-  //     if (fetchedDoctor != null) {
-  //       setState(() {
-  //         doctor = fetchedDoctor;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching doctor details: $e');
-  //   }
-  // }
+      if (fetchedPatient != null) {
+        setState(() {
+          patient = fetchedPatient;
+        });
+      }
+    } catch (e) {
+      print('Error fetching patient details: $e');
+    }
+  }
 
   void _fetchMessages() async {
     try {
@@ -118,8 +127,13 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: color3,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
-        title: const Text('HealthLink'),
+        title: Text(
+          'HealthLink',
+          style:
+              GoogleFonts.raleway(color: color4, fontWeight: FontWeight.bold),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu), // Icon that opens the drawer
@@ -131,33 +145,33 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: <Widget>[
           IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.home_filled)),
+            onPressed: () =>
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomeBody(),
+            )),
+            icon: Icon(Icons.home_filled),
+            color: color4,
+          ),
           Visibility(
             visible: true,
             child: TextButton(
               onPressed: () {
-                // Perform actions when the doctor button is pressed
-                // For example, change the color or toggle visibility
-                setState(() {
-                  isDoctorButtonVisible = false;
-                });
-                // Change visibility of the button
-                // You can add more actions here
+                _showDoctorListDialog();
+
+                // setState(() {
+                //   isDoctorButtonVisible = false;
+                // });
               },
               child: Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDoctorButtonVisible ? color4 : Colors.grey,
+                  color: color4,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'Doctor', // Text for the doctor button
-                  style: TextStyle(
-                      color: isDoctorButtonVisible
-                          ? collaborateAppBarBgColor
-                          : color4,
-                      fontSize: 20), // Adjust text color as needed
+                  'Doctor',
+                  style:
+                      TextStyle(color: collaborateAppBarBgColor, fontSize: 20),
                 ),
               ),
             ),
@@ -314,7 +328,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'Koushik',
+                    patient?.form?.name ?? 'N/A',
                     style: GoogleFonts.raleway(
                       color: color4,
                       fontSize: 25,
@@ -342,11 +356,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
           Center(
             child: Text(
-              'Doctor Consultation Summaries',
+              'Consultation Summaries',
               style: GoogleFonts.raleway(
                   color: collaborateAppBarBgColor,
                   fontWeight: FontWeight.w600,
-                  fontSize: 25),
+                  fontSize: 30),
               textAlign: TextAlign.center,
             ),
           ),
@@ -379,7 +393,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icon(Icons.search, color: Colors.white),
                   SizedBox(width: 8.0),
                   Text(
-                    'Search Doctor Summaries',
+                    'Search Summaries',
                     style: TextStyle(color: Colors.white, fontSize: 17),
                   ),
                 ],
@@ -393,6 +407,305 @@ class _ChatScreenState extends State<ChatScreen> {
           )
           // Add more list items as needed
         ],
+      ),
+    );
+  }
+
+// Method to navigate to the chat screen with the selected doctor
+  void _navigateToChatScreenWithDoctor(String doctorId, String patientId,
+      String doctorUserId, String patientUserId) {
+    // You can pass the selected doctor's information to the next screen
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+          builder: (context) => ConsultationChatScreen(
+                patientUserId: patientUserId,
+                doctorUserId: doctorUserId,
+                doctorId: doctorId,
+                patientId: patientId,
+              )),
+    );
+  }
+
+  // void _showDoctorListDialog() {
+  //   String prevMessageId =
+  //       messages.length != 0 ? messages[messages.length - 1].messageId : "";
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return FutureBuilder<List<Doctor>?>(
+  //         future: MessageService().getDoctors(prevMessageId,
+  //             this.widget.patientId), // Replace with your service call
+  //         builder: (context, snapshot) {
+  //           if (snapshot.connectionState == ConnectionState.waiting) {
+  //             // Show loading indicator while fetching data
+  //             return Center(child: CircularProgressIndicator());
+  //           } else if (snapshot.hasError) {
+  //             // Show error message if any
+  //             return Center(child: Text('Error: ${snapshot.error}'));
+  //           } else if (snapshot.hasData && snapshot.data != null) {
+  //             List<Doctor> doctors = snapshot.data!;
+
+  //             return Dialog(
+  //               backgroundColor: color3,
+  //               child: Container(
+  //                 width: double.minPositive,
+  //                 constraints: BoxConstraints(
+  //                   maxHeight: MediaQuery.of(context).size.height * 0.7,
+  //                 ),
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   crossAxisAlignment: CrossAxisAlignment.stretch,
+  //                   children: [
+  //                     Container(
+  //                       padding: EdgeInsets.all(20),
+  //                       child: Text(
+  //                         'Select a Doctor',
+  //                         style: GoogleFonts.raleway(
+  //                           color: collaborateAppBarBgColor,
+  //                           fontSize: 20,
+  //                           fontWeight: FontWeight.bold,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     ListView.builder(
+  //                       shrinkWrap: true,
+  //                       itemCount: doctors.length,
+  //                       itemBuilder: (BuildContext context, int index) {
+  //                         Doctor doctor = doctors[index];
+  //                         return ListTile(
+  //                           title: Text(
+  //                             doctor.username,
+  //                             style: GoogleFonts.raleway(
+  //                               color: collaborateAppBarBgColor,
+  //                               fontWeight: FontWeight.bold,
+  //                             ),
+  //                           ),
+  //                           subtitle: Text(
+  //                             doctor.specializations.toString(),
+  //                             style: GoogleFonts.raleway(
+  //                               color: collaborateAppBarBgColor,
+  //                               fontWeight: FontWeight.w600,
+  //                             ),
+  //                           ),
+  //                           trailing: ElevatedButton(
+  //                             onPressed: () {
+  //                               _navigateToChatScreenWithDoctor(
+  //                                 doctor.username,
+  //                                 doctor.specializations.toString(),
+  //                                 doctor.doctorId,
+  //                                 'patientUserId', // Replace with patient ID
+  //                               );
+  //                             },
+  //                             style: ElevatedButton.styleFrom(
+  //                               backgroundColor: color4,
+  //                             ),
+  //                             child: Text(
+  //                               'Join',
+  //                               style: GoogleFonts.raleway(
+  //                                 color: collaborateAppBarBgColor,
+  //                                 fontWeight: FontWeight.bold,
+  //                                 fontSize: 16,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         );
+  //                       },
+  //                     ),
+  //                     Container(
+  //                       padding: EdgeInsets.all(8.0),
+  //                       child: ElevatedButton(
+  //                         onPressed: () {
+  //                           Navigator.of(context).pop();
+  //                         },
+  //                         style: ElevatedButton.styleFrom(
+  //                           backgroundColor: Colors.black,
+  //                         ),
+  //                         child: Text(
+  //                           'Close',
+  //                           style: GoogleFonts.raleway(
+  //                             color: color4,
+  //                             fontSize: 16,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       alignment: Alignment.bottomRight,
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           } else {
+  //             // Show message if no data found
+  //             return Center(child: Text('No data available'));
+  //           }
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+  void _showDoctorListDialog() {
+    String prevMessageId =
+        messages.isNotEmpty ? messages[messages.length - 1].messageId : "";
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<List<Doctor>?>(
+          future: MessageService().getDoctors(prevMessageId,
+              this.widget.patientId), // Replace with your service call
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (snapshot.hasData && snapshot.data != null) {
+              List<Doctor> doctors = snapshot.data!;
+
+              if (doctors.isEmpty) {
+                return _buildEmptyDoctorListDialog();
+              } else {
+                return _buildDoctorListDialog(doctors);
+              }
+            } else {
+              return Center(child: Text('No data available'));
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyDoctorListDialog() {
+    return Dialog(
+      backgroundColor: color3,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'No doctors available',
+              style: GoogleFonts.raleway(
+                color: collaborateAppBarBgColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              alignment: Alignment.bottomRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                ),
+                child: Text(
+                  'Close',
+                  style: GoogleFonts.raleway(
+                    color: color4,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoctorListDialog(List<Doctor> doctors) {
+    return Dialog(
+      backgroundColor: color3,
+      child: Container(
+        width: double.minPositive,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'Select a Doctor',
+                style: GoogleFonts.raleway(
+                  color: collaborateAppBarBgColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: doctors.length,
+              itemBuilder: (BuildContext context, int index) {
+                Doctor doctor = doctors[index];
+                return ListTile(
+                  title: Text(
+                    doctor.username,
+                    style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    doctor.specializations.toString(),
+                    style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      _navigateToChatScreenWithDoctor(
+                        doctor.username,
+                        doctor.specializations.toString(),
+                        doctor.doctorId,
+                        'patientUserId', // Replace with patient ID
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: color4,
+                    ),
+                    child: Text(
+                      'Join',
+                      style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                ),
+                child: Text(
+                  'Close',
+                  style: GoogleFonts.raleway(
+                    color: color4,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              alignment: Alignment.bottomRight,
+            )
+          ],
+        ),
       ),
     );
   }

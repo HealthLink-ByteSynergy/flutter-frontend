@@ -27,7 +27,7 @@
 //     doctor: doctorName,
 //     patient: patientName,
 //     timestamp: summary.timestamp,
-//     summaryText: summaryText,
+//     text: summaryText,
 //     prescription: dummyPrescription,
 //   );
 // }

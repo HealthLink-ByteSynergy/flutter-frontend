@@ -19,6 +19,7 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   final UserService _userService = UserService();
   List<Patient> chatList = []; // List to store patient information
+  String patientUserId = "";
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _HomeBodyState extends State<HomeBody> {
 
       setState(() {
         chatList = patients;
+        patientUserId = userId;
         // print('entered');
       });
     } catch (e) {
@@ -47,6 +49,7 @@ class _HomeBodyState extends State<HomeBody> {
     return Scaffold(
       backgroundColor: color3,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text('HealthLink',
             style: GoogleFonts.raleway(
@@ -112,8 +115,10 @@ class _HomeBodyState extends State<HomeBody> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                MedicalInfoForm(customForm: CustomForm())),
+                            builder: (context) => MedicalInfoForm(
+                                  customForm: CustomForm(),
+                                  userId: patientUserId,
+                                )),
                       );
                     },
                     child: Text(
@@ -173,6 +178,7 @@ class _HomeBodyState extends State<HomeBody> {
                                 MaterialPageRoute(
                                   builder: (context) => ChatScreen(
                                     patientId: chatList[index].patientId!,
+                                    patientUserId: patientUserId,
                                   ),
                                 ),
                               );
@@ -196,8 +202,10 @@ class _HomeBodyState extends State<HomeBody> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            MedicalInfoForm(customForm: CustomForm())),
+                        builder: (context) => MedicalInfoForm(
+                              customForm: CustomForm(),
+                              userId: patientUserId,
+                            )),
                   );
                 },
                 label: Container(

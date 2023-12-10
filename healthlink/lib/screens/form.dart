@@ -10,8 +10,9 @@ import 'package:healthlink/utils/widgets/custom_text_field.dart';
 
 class MedicalInfoForm extends StatefulWidget {
   CustomForm customForm;
+  String userId;
 
-  MedicalInfoForm({super.key, required this.customForm});
+  MedicalInfoForm({super.key, required this.customForm, required this.userId});
 
   @override
   _MedicalInfoFormState createState() => _MedicalInfoFormState();
@@ -93,6 +94,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => ChatScreen(
               patientId: result['data']['patientId'],
+              patientUserId: this.widget.userId,
             ),
           ));
         } else {

@@ -40,16 +40,16 @@ class SummaryListWidget extends StatelessWidget {
               'Consultation Date: ${summary.timestamp.day}-${summary.timestamp.month}-${summary.timestamp.year}',
               style: GoogleFonts.raleway(color: color4),
             ),
-            onTap: () {
-              // Navigate to a new screen to display detailed summary information
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SummaryDetailsScreen(
-              //         summary: generateDetailedSummary(summary)),
-              //   ),
-              // );
-            },
+            // onTap: () {
+            //   // Navigate to a new screen to display detailed summary information
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => SummaryDetailsScreen(
+            //           summary: generateDetailedSummary(summary)),
+            //     ),
+            //   );
+            // },
           ),
         );
       },

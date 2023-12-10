@@ -2,18 +2,31 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/auth_service.dart';
+import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
+import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
+import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Prescription.dart';
+import 'package:healthlink/screens/Temporary_Chat/doctor_info.dart';
+import 'package:healthlink/screens/Temporary_Chat/patient_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/prescription_screen.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class ConsultationChatScreen extends StatefulWidget {
+  final String patientUserId;
+  final String doctorUserId;
   final String patientId;
   final String doctorId;
 
   const ConsultationChatScreen(
-      {Key? key, required this.patientId, required this.doctorId})
+      {Key? key,
+      required this.patientUserId,
+      required this.doctorUserId,
+      required this.patientId,
+      required this.doctorId})
       : super(key: key);
 
   @override
@@ -35,6 +48,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   bool _isInputEmpty = true;
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
+  String currentUserId = "";
+  Patient? patient;
+  Doctor? doctor;
 
   @override
   void initState() {
@@ -45,7 +61,52 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       prescriptionTosave.generalHabits = '';
       prescriptionTosave.patientId = widget.patientId;
     });
+    // _setCurrentUserId();
     // _fetchMessages();
+  }
+
+  void _setCurrentUserId() async {
+    try {
+      String? userId = await AuthService().getUserId();
+      setState(() {
+        if (userId != null) {
+          currentUserId = userId;
+        }
+        // print('entered');
+      });
+    } catch (e) {
+      // Handle exceptions during data fetch
+      // print('Error fetching patient data: $e');
+    }
+  }
+
+  void _fetchPatientDetails() async {
+    try {
+      // String? userId = await AuthService().getUserId();
+      Patient? fetchedPatient =
+          await PatientService().getPatientById(this.widget.patientId);
+
+      if (fetchedPatient != null) {
+        setState(() {
+          patient = fetchedPatient;
+        });
+      }
+    } catch (e) {
+      print('Error fetching doctor details: $e');
+    }
+  }
+
+  void _fetchDoctorDetails(String doctorId) async {
+    try {
+      final doctorService = DoctorService();
+      // final userId = await AuthService().getUserId();
+      Doctor? doctorRecieved = await doctorService.getDoctorByUserId();
+      if (doctorRecieved != null) {
+        doctor = doctorRecieved;
+      }
+    } catch (e) {
+      throw Exception('Error fetching patient details: $e');
+    }
   }
 
   void _fetchMessages() async {
@@ -108,13 +169,20 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     return Scaffold(
       backgroundColor: color3,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor:
             collaborateAppBarBgColor, // Replace with collaborateAppBarBgColor
-        title: const Text('HealthLink'),
+        title: Text(
+          'HealthLink',
+          style: GoogleFonts.raleway(
+              color: color4, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         actions: <Widget>[
           IconButton(
               icon: Icon(
-                  Icons.description), // Replace with your add prescription icon
+                Icons.description,
+                color: color4,
+              ),
               onPressed: () async {
                 Prescription? prescription = await showDialog(
                   context: context,
@@ -132,14 +200,11 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                 }
               }),
           IconButton(
-            icon: Icon(Icons.phone), // Replace with your phone call icon
-            onPressed: () {
-              // Navigate to phone call screen
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => PhoneCallScreen()),
-              // );
-            },
+            icon: Icon(
+              Icons.phone,
+              color: color4,
+            ),
+            onPressed: () {},
           ),
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -160,22 +225,28 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
               switch (value) {
                 case 'patientInfo':
                   // Navigate to patient info screen
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => PatientInfoScreen()),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PatientDetailsScreen(
+                              patientId: this.widget.patientId,
+                            )),
+                  );
                   break;
                 case 'doctorInfo':
                   // Navigate to doctor info screen
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => DoctorInfoScreen()),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DoctorDetailsScreen(
+                              doctorId: this.widget.doctorId,
+                            )),
+                  );
                   break;
                 case 'exitChat':
                   // Perform exit chat action
                   // For example, pop back to previous screens or close the chat
+                  // _exitChat()
                   break;
               }
             },
@@ -340,6 +411,8 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
 void main() {
   runApp(const MaterialApp(
     home: ConsultationChatScreen(
+      patientUserId: "jdj",
+      doctorUserId: "jko",
       patientId: "hehe",
       doctorId: "hii",
     ),

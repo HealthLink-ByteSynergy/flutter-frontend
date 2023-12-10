@@ -266,11 +266,14 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     frequencyController.clear();
                   });
                 },
-                child: Text('Add'),
+                child: Text(
+                  'Add',
+                  style: GoogleFonts.raleway(color: color4),
+                ),
               ),
               SizedBox(height: 50.0),
               Text(
-                'General Habits or Instructions:',
+                'General Habits or Instructions',
                 style: GoogleFonts.raleway(
                     fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
