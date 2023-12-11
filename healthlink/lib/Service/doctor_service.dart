@@ -7,10 +7,36 @@ import 'package:http/http.dart' as http;
 class DoctorService {
   String doctorURL = API.baseURL + API.doctorEndpoint;
 
+  Future<Map<String, dynamic>> updateDoctor(Doctor doctor) async {
+    Map<String, dynamic> result = {};
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.put(
+        Uri.parse('$doctorURL/update/${doctor.doctorId}'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(doctor.toJson()),
+      );
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        result['success'] = true;
+        result['data'] = jsonDecode(response.body);
+      } else {
+        result['success'] = false;
+        result['error'] = 'Failed to update Doctor: ${response.reasonPhrase}';
+      }
+    } catch (error) {
+      result['success'] = false;
+      result['error'] = 'Error occurred: $error';
+    }
+    return result;
+  }
+
   Future<Doctor?> getDoctorByUserId() async {
     try {
-      // AuthService().removeToken();
-      // String jwtToken = '';
       final String? jwtToken = await AuthService().getToken();
       final String? userId = await AuthService().getUserId();
       final response = await http.get(

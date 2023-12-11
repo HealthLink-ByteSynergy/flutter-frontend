@@ -112,9 +112,11 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   }
 
   void _fetchMessages() async {
+    String id =
+        this.widget.isDoctor ? this.widget.doctorId : this.widget.patientId;
     try {
       List<Message>? fetchedMessages =
-          await _messageService.getMessagesFromBot(widget.patientId);
+          await _messageService.getMessagesFromBot(id);
 
       if (fetchedMessages != null) {
         setState(() {
@@ -127,6 +129,12 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   }
 
   void _sendMessage(String text) async {
+    String senId = this.widget.isDoctor
+        ? this.widget.doctorId ?? 'n/a'
+        : this.widget.patientId ?? 'n/a';
+    String recId = !this.widget.isDoctor
+        ? this.widget.doctorId ?? 'n/a'
+        : this.widget.patientId ?? 'n/a';
     setState(() {
       _isInputEmpty = true;
       _botReplied = true; // User has sent a message, waiting for bot reply
@@ -135,10 +143,10 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     Message newMessage = Message(
         messageId: "",
         previousMessageId: "",
-        receiverId: "",
+        receiverId: recId,
         messageType: "",
         text: text,
-        senderId: widget.patientId,
+        senderId: senId,
         timestamp: DateTime.now().toString(),
         summary: text
         // Add other necessary properties for the message
@@ -154,7 +162,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
 
     try {
       Map<String, dynamic>? result =
-          await _messageService.saveMessage(newMessage);
+          await _messageService.saveMessageToUser(newMessage);
 
       if (result!['data'] == 'success') {
         _fetchMessages();
@@ -175,7 +183,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
         backgroundColor:
             collaborateAppBarBgColor, // Replace with collaborateAppBarBgColor
         title: Text(
-          'HealthLink',
+          this.widget.isDoctor
+              ? (patient?.form?.name ?? 'HealthLink')
+              : (doctor?.username ?? 'HealthLink'),
           style: GoogleFonts.raleway(
               color: color4, fontWeight: FontWeight.bold, fontSize: 22),
         ),

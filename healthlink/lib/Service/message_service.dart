@@ -42,6 +42,39 @@ class MessageService {
     return result;
   }
 
+  Future<Map<String, dynamic>?> saveMessageToUser(Message message) async {
+    print('in save message user');
+    Map<String, dynamic> result = {};
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.post(Uri.parse('$messageURL/saveUserToUser'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $jwtToken',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(
+            {
+              "previousMessageId": message.previousMessageId,
+              "senPatientEntity": {"patientId": message.senderId},
+              "recPatientEntity": {"patientId": message.receiverId},
+              "text": message.text
+            },
+          ));
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        result['data'] = 'success';
+      } else {
+        // Request failed, store error message in the result map
+      }
+    } catch (error) {
+      print(error);
+      // Handle other errors like network issues
+    }
+
+    return result;
+  }
+
   Future<List<Message>?> getMessagesFromBot(String patientId) async {
     List<Message> messages = [];
     try {
@@ -57,6 +90,39 @@ class MessageService {
           body: json.encode({
             "senPatientEntity": {
               "patientId": patientId,
+            }
+          }));
+
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = json.decode(response.body);
+        print(jsonResponse);
+        messages = jsonResponse.map((json) => Message.fromJson(json)).toList();
+
+        return messages;
+      } else {
+        throw Exception('Failed to fetch messages');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<Message>?> getMessagesFromUser(String id) async {
+    List<Message> messages = [];
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.post(
+          Uri.parse(
+              '$messageURL/getAllMessagesBot'), // Assuming the endpoint structure
+          headers: {
+            'Authorization': 'Bearer $jwtToken',
+            'Content-Type': 'application/json',
+            // Add other necessary headers here if required by your API
+          },
+          body: json.encode({
+            "senPatientEntity": {
+              "patientId": id,
             }
           }));
 

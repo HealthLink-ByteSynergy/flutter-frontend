@@ -294,17 +294,21 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 mainAxisAlignment: MainAxisAlignment
                     .spaceEvenly, // Adjust the alignment as needed
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle cancel action
-                      Navigator.pop(
-                          context); // Close the dialog without returning any data
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            blackColor), // Change the color as needed
-                    child: Text('Cancel'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     // Handle cancel action
+                  //     Navigator.pop(
+                  //         context); // Close the dialog without returning any data
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //       backgroundColor:
+                  //           blackColor), // Change the color as needed
+                  //   child: Text(
+                  //     'Cancel',
+                  //     style: GoogleFonts.raleway(
+                  //         color: color4, fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
                   ElevatedButton(
                     onPressed: () {
                       // Handle saving prescription
@@ -322,7 +326,11 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     },
                     style:
                         ElevatedButton.styleFrom(backgroundColor: blackColor),
-                    child: Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.raleway(
+                          color: color4, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),

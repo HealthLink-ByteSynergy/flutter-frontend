@@ -9,4 +9,5 @@ class API {
   static const String messageEndpoint = '/messages';
   static const String meetingEndpoint = '/meeting';
   static const String medicineEndpoint = '/medicine';
+  static const String consultationChatEndpoint = '/tempchat';
 }
