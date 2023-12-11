@@ -98,8 +98,10 @@ class _LoginScreenState extends State<LoginScreen> {
             if (doctorDetails != null) {
               // Navigate to DoctorScreen with doctor details
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) =>
-                    DoctorScreen(doctorId: doctorDetails.doctorId),
+                builder: (context) => DoctorScreen(
+                  doctorId: doctorDetails.doctorId,
+                  doctorUserId: userDetails['id'],
+                ),
               ));
             }
           } else {

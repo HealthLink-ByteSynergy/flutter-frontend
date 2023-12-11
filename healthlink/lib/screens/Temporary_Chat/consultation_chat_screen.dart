@@ -14,17 +14,16 @@ import 'package:healthlink/screens/Temporary_Chat/doctor_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/patient_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/prescription_screen.dart';
 import 'package:healthlink/utils/colors.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class ConsultationChatScreen extends StatefulWidget {
-  final String patientUserId;
-  final String doctorUserId;
+  final bool isDoctor;
   final String patientId;
   final String doctorId;
 
   const ConsultationChatScreen(
       {Key? key,
-      required this.patientUserId,
-      required this.doctorUserId,
+      required this.isDoctor,
       required this.patientId,
       required this.doctorId})
       : super(key: key);
@@ -61,7 +60,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       prescriptionTosave.generalHabits = '';
       prescriptionTosave.patientId = widget.patientId;
     });
-    // _setCurrentUserId();
+    _setCurrentUserId();
+    _fetchPatientDetails();
+    _fetchDoctorDetails();
     // _fetchMessages();
   }
 
@@ -96,11 +97,12 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     }
   }
 
-  void _fetchDoctorDetails(String doctorId) async {
+  void _fetchDoctorDetails() async {
     try {
       final doctorService = DoctorService();
       // final userId = await AuthService().getUserId();
-      Doctor? doctorRecieved = await doctorService.getDoctorByUserId();
+      Doctor? doctorRecieved =
+          await doctorService.getDoctorById(this.widget.doctorId);
       if (doctorRecieved != null) {
         doctor = doctorRecieved;
       }
@@ -178,33 +180,40 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
               color: color4, fontWeight: FontWeight.bold, fontSize: 22),
         ),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.description,
-                color: color4,
-              ),
-              onPressed: () async {
-                Prescription? prescription = await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return PrescriptionScreen(
-                      doctorId: widget.doctorId,
-                      patientId: widget.patientId,
-                      currentPrescription: prescriptionTosave,
+          this.widget.isDoctor
+              ? IconButton(
+                  icon: Icon(
+                    Icons.description,
+                    color: color4,
+                  ),
+                  onPressed: () async {
+                    Prescription? prescription = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return PrescriptionScreen(
+                          doctorId: widget.doctorId,
+                          patientId: widget.patientId,
+                          currentPrescription: prescriptionTosave,
+                        );
+                      },
                     );
-                  },
-                );
-                if (prescription != null) {
-                  prescriptionTosave = prescription;
-                  print(prescriptionTosave.toString());
-                }
-              }),
+                    if (prescription != null) {
+                      prescriptionTosave = prescription;
+                      print(prescriptionTosave.toString());
+                    }
+                  })
+              : Container(),
           IconButton(
             icon: Icon(
               Icons.phone,
               color: color4,
             ),
-            onPressed: () {},
+            onPressed: () {
+              String phoneNumber = this.widget.isDoctor
+                  ? patient!.form!.number ?? '108'
+                  : doctor!.phoneNumber ?? '108';
+              FlutterPhoneDirectCaller.callNumber(phoneNumber);
+            },
           ),
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -411,10 +420,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
 void main() {
   runApp(const MaterialApp(
     home: ConsultationChatScreen(
-      patientUserId: "jdj",
-      doctorUserId: "jko",
-      patientId: "hehe",
-      doctorId: "hii",
+      isDoctor: true,
+      patientId: "018c536f-fc98-71cc-bd79-b58ca17ffa35",
+      doctorId: "018c54de-8da5-744f-93ce-f4aef174df08",
     ),
   ));
 }

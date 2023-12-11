@@ -5,19 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/auth_service.dart';
 import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
+import 'package:healthlink/Trial/temp_chat.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/screens/Doctor/doctor_settings.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
+import 'package:healthlink/screens/Temporary_Chat/consultation_chat_screen.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class DoctorScreen extends StatefulWidget {
   final String doctorId;
+  final String doctorUserId;
 
-  const DoctorScreen({Key? key, required this.doctorId}) : super(key: key);
+  const DoctorScreen(
+      {Key? key, required this.doctorId, required this.doctorUserId})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -32,6 +37,14 @@ class _DoctorScreenState extends State<DoctorScreen> {
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
   Doctor? doctor;
+
+  List<String> patients = [
+    'Patient 1',
+    'Patient 2',
+    'Patient 3',
+    'Patient 4',
+    'Patient 5',
+  ];
 
   @override
   void initState() {
@@ -70,53 +83,18 @@ class _DoctorScreenState extends State<DoctorScreen> {
     }
   }
 
-  void _sendMessage(String text) async {
-    setState(() {
-      _isInputEmpty = true;
-      _botReplied = false; // User has sent a message, waiting for bot reply
-    });
-    _messageController.clear();
-    Message newMessage = Message(
-        messageId: "",
-        previousMessageId: "",
-        receiverId: "",
-        messageType: "",
-        text: text,
-        senderId: widget.doctorId,
-        timestamp: DateTime.now().toString(),
-        summary: text
-        // Add other necessary properties for the message
-        );
-
-    if (messages.isNotEmpty) {
-      newMessage.previousMessageId = messages[messages.length - 1].messageId;
-    }
-
-    setState(() {
-      messages.add(newMessage);
-    });
-
-    try {
-      Map<String, dynamic>? result =
-          await _messageService.saveMessage(newMessage);
-
-      if (result!['data'] == 'success') {
-        _fetchMessages();
-      }
-    } catch (e) {
-      print('Error sending message: $e');
-    }
-
-    _messageController.clear();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: color3,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: color4),
         backgroundColor: collaborateAppBarBgColor,
-        title: const Text('HealthLink'),
+        title: Text(
+          'HealthLink',
+          style:
+              GoogleFonts.raleway(color: color4, fontWeight: FontWeight.bold),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu), // Icon that opens the drawer
@@ -128,27 +106,61 @@ class _DoctorScreenState extends State<DoctorScreen> {
         ),
       ),
       drawer: _buildDrawer(),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              itemCount: messages.length, // Use the messages list length
-              itemBuilder: (BuildContext context, int index) {
-                Message message =
-                    messages[index]; // Get the message at this index
-                String timestampString = message.timestamp;
-
-                DateTime timestamp = DateTime.parse(timestampString);
-                // Build the chat message using the actual message object
-                // print(DateTime.now());
-                return _buildChatMessage(message.summary,
-                    message.senderId == widget.doctorId, timestamp);
+      body: patients.isEmpty
+          ? Center(child: Text('No patients available'))
+          : ListView.builder(
+              itemCount: patients.length,
+              itemBuilder: (context, index) {
+                return _buildPatientCard(patients[index]);
               },
             ),
-          ),
-          // _buildInputField(),
-        ],
+    );
+  }
+
+  Widget _buildPatientCard(String patientName) {
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '$patientName needs your help!',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to chat screen with the patient
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ConsultationChatScreen(
+                            isDoctor: true, patientId: "", doctorId: ""),
+                      ),
+                    );
+                  },
+                  child: Text('Join'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      // Remove the patient from the list
+                      patients.remove(patientName);
+                    });
+                  },
+                  child: Text('Reject'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -187,79 +199,12 @@ class _DoctorScreenState extends State<DoctorScreen> {
     );
   }
 
-  // Widget _buildInputField() {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(8.0),
-  //     child: Row(
-  //       children: [
-  //         Expanded(
-  //           child: TextField(
-  //             controller: _messageController,
-  //             autocorrect: true,
-  //             cursorColor: color4,
-  //             maxLines: null,
-  //             onChanged: (text) {
-  //               setState(() {
-  //                 _isInputEmpty = text.isEmpty;
-  //               });
-  //             },
-  //             decoration: InputDecoration(
-  //               labelText: 'Message',
-  //               counterStyle: const TextStyle(color: color4),
-  //               labelStyle: const TextStyle(
-  //                   color: color4), // Change to your preferred color
-  //               filled: true,
-  //               floatingLabelBehavior: FloatingLabelBehavior.never,
-  //               fillColor: collaborateAppBarBgColor,
-  //               border: OutlineInputBorder(
-  //                 borderRadius: BorderRadius.circular(30.0),
-  //                 borderSide:
-  //                     const BorderSide(width: 0, style: BorderStyle.none),
-  //               ),
-  //             ),
-  //             style: GoogleFonts.raleway(
-  //                 color: color4, fontWeight: FontWeight.w500),
-  //             keyboardType: TextInputType.text,
-  //             enabled: _botReplied, // Disable input if the bot hasn't replied
-  //           ),
-  //         ),
-  //         const SizedBox(width: 8.0),
-  //         _buildSendButton(),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildDateSeparator(DateTime messageTime) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         '${messageTime.day}/${messageTime.month}/${messageTime.year}',
         style: const TextStyle(color: blackColor),
-      ),
-    );
-  }
-
-  Widget _buildSendButton() {
-    return GestureDetector(
-      onTap: _isInputEmpty || !_botReplied
-          ? null
-          : () {
-              _sendMessage(_messageController.text);
-            },
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: _isInputEmpty || !_botReplied
-              ? Colors.grey
-              : collaborateAppBarBgColor,
-        ),
-        padding: const EdgeInsets.all(8.0),
-        child: Icon(
-          Icons.send,
-          color: _isInputEmpty || !_botReplied ? color4 : color4,
-          size: 35.0,
-        ),
       ),
     );
   }

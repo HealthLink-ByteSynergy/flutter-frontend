@@ -42,6 +42,7 @@ class DoctorSettingsScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              iconTheme: IconThemeData(color: color4),
               backgroundColor: collaborateAppBarBgColor,
               title: Text(
                 'HealthLink',
@@ -115,7 +116,7 @@ class DoctorSettingsScreen extends StatelessWidget {
                 ),
                 ListView.builder(
                   shrinkWrap: true,
-                  itemCount: doctorDetails.specializations.length,
+                  itemCount: doctorDetails.specializations.length - 1,
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: Icon(

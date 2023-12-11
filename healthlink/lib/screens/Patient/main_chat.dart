@@ -418,8 +418,7 @@ class _ChatScreenState extends State<ChatScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
           builder: (context) => ConsultationChatScreen(
-                patientUserId: patientUserId,
-                doctorUserId: doctorUserId,
+                isDoctor: false,
                 doctorId: doctorId,
                 patientId: patientId,
               )),

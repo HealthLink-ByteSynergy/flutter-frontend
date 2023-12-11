@@ -64,7 +64,9 @@ class AuthenticationWrapper extends StatelessWidget {
                             Doctor? doctorDetails = doctorSnapshot.data;
                             if (doctorDetails != null) {
                               return DoctorScreen(
-                                  doctorId: doctorDetails.doctorId);
+                                doctorId: doctorDetails.doctorId,
+                                doctorUserId: userDetails['id'],
+                              );
                             } else {
                               return LoginScreen();
                             }
