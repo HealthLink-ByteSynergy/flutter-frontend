@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Summary.dart';
-import 'package:healthlink/sumtodetail.dart';
+// import 'package:healthlink/sumtodetail.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_description.dart';
 
