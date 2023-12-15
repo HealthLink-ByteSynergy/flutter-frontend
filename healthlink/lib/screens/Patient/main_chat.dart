@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Doctor.dart';
+import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Patient.dart';
+import 'package:healthlink/models/Prescription.dart';
 import 'package:healthlink/models/Summary.dart';
+import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
 import 'package:healthlink/screens/Temporary_Chat/consultation_chat_screen.dart';
@@ -374,7 +378,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SearchScreen(
-                      summaries: getDummySummaries(), role: 'PATIENT'),
+                      summaries: generateDummySummaries(), role: 'PATIENT'),
                 ),
               );
             },
@@ -403,7 +407,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
           Flexible(
             child: SummaryListWidget(
-                summaries: getDummySummaries(), role: 'PATIENT'),
+                summaries: generateDummySummaries(), role: 'PATIENT'),
           )
           // Add more list items as needed
         ],
@@ -412,9 +416,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 // Method to navigate to the chat screen with the selected doctor
-  void _navigateToChatScreenWithDoctor(String doctorId, String patientId,
-      String doctorUserId, String patientUserId) {
-    // You can pass the selected doctor's information to the next screen
+  void _navigateToChatScreenWithDoctor(String doctorId, String patientId) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
           builder: (context) => ConsultationChatScreen(
@@ -424,124 +426,6 @@ class _ChatScreenState extends State<ChatScreen> {
               )),
     );
   }
-
-  // void _showDoctorListDialog() {
-  //   String prevMessageId =
-  //       messages.length != 0 ? messages[messages.length - 1].messageId : "";
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return FutureBuilder<List<Doctor>?>(
-  //         future: MessageService().getDoctors(prevMessageId,
-  //             this.widget.patientId), // Replace with your service call
-  //         builder: (context, snapshot) {
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             // Show loading indicator while fetching data
-  //             return Center(child: CircularProgressIndicator());
-  //           } else if (snapshot.hasError) {
-  //             // Show error message if any
-  //             return Center(child: Text('Error: ${snapshot.error}'));
-  //           } else if (snapshot.hasData && snapshot.data != null) {
-  //             List<Doctor> doctors = snapshot.data!;
-
-  //             return Dialog(
-  //               backgroundColor: color3,
-  //               child: Container(
-  //                 width: double.minPositive,
-  //                 constraints: BoxConstraints(
-  //                   maxHeight: MediaQuery.of(context).size.height * 0.7,
-  //                 ),
-  //                 child: Column(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   crossAxisAlignment: CrossAxisAlignment.stretch,
-  //                   children: [
-  //                     Container(
-  //                       padding: EdgeInsets.all(20),
-  //                       child: Text(
-  //                         'Select a Doctor',
-  //                         style: GoogleFonts.raleway(
-  //                           color: collaborateAppBarBgColor,
-  //                           fontSize: 20,
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     ListView.builder(
-  //                       shrinkWrap: true,
-  //                       itemCount: doctors.length,
-  //                       itemBuilder: (BuildContext context, int index) {
-  //                         Doctor doctor = doctors[index];
-  //                         return ListTile(
-  //                           title: Text(
-  //                             doctor.username,
-  //                             style: GoogleFonts.raleway(
-  //                               color: collaborateAppBarBgColor,
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                           ),
-  //                           subtitle: Text(
-  //                             doctor.specializations.toString(),
-  //                             style: GoogleFonts.raleway(
-  //                               color: collaborateAppBarBgColor,
-  //                               fontWeight: FontWeight.w600,
-  //                             ),
-  //                           ),
-  //                           trailing: ElevatedButton(
-  //                             onPressed: () {
-  //                               _navigateToChatScreenWithDoctor(
-  //                                 doctor.username,
-  //                                 doctor.specializations.toString(),
-  //                                 doctor.doctorId,
-  //                                 'patientUserId', // Replace with patient ID
-  //                               );
-  //                             },
-  //                             style: ElevatedButton.styleFrom(
-  //                               backgroundColor: color4,
-  //                             ),
-  //                             child: Text(
-  //                               'Join',
-  //                               style: GoogleFonts.raleway(
-  //                                 color: collaborateAppBarBgColor,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 fontSize: 16,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         );
-  //                       },
-  //                     ),
-  //                     Container(
-  //                       padding: EdgeInsets.all(8.0),
-  //                       child: ElevatedButton(
-  //                         onPressed: () {
-  //                           Navigator.of(context).pop();
-  //                         },
-  //                         style: ElevatedButton.styleFrom(
-  //                           backgroundColor: Colors.black,
-  //                         ),
-  //                         child: Text(
-  //                           'Close',
-  //                           style: GoogleFonts.raleway(
-  //                             color: color4,
-  //                             fontSize: 16,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       alignment: Alignment.bottomRight,
-  //                     )
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           } else {
-  //             // Show message if no data found
-  //             return Center(child: Text('No data available'));
-  //           }
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 
   void _showDoctorListDialog() {
     String prevMessageId =
@@ -663,11 +547,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   trailing: ElevatedButton(
                     onPressed: () {
                       _navigateToChatScreenWithDoctor(
-                        doctor.username,
-                        doctor.specializations.toString(),
-                        doctor.doctorId,
-                        'patientUserId', // Replace with patient ID
-                      );
+                          doctor.doctorId, this.widget.patientId
+
+                          // Replace with patient ID
+                          );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: color4,
@@ -709,106 +592,72 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  List<Summary> getDummySummaries() {
-    return [
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        patientId: '123',
-        doctorId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        patientId: '123',
-        doctorId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      // Add more dummy summaries as needed
-    ];
+  List<DetailedSummary> generateDummySummaries() {
+    List<DetailedSummary> dummySummaries = [];
+
+    for (int i = 0; i < 10; i++) {
+      Doctor dummyDoctor = Doctor(
+        doctorId: 'DoctorID$i',
+        userId: 'UserID$i',
+        specializations: ['Specialization $i'],
+        availability: 'Available',
+        phoneNumber: '123456789$i',
+        licenseNumber: 'License$i',
+        email: 'doctor$i@example.com',
+        username: 'doctor_$i',
+        password: 'password$i',
+      );
+
+      CustomForm dummyForm = CustomForm();
+      dummyForm.setValues(
+        'Patient Name $i',
+        '$i',
+        '123456789$i',
+        '5\'10"',
+        '150 lbs',
+        'Some Medical Condition $i',
+        'Medication $i',
+        'Recent Surgery $i',
+        'Allergy $i',
+        'Smoking Frequency $i',
+        'Drinking Frequency $i',
+        'Drugs Usage $i',
+      );
+
+      Patient dummyPatient = Patient(
+        patientId: 'PatientID$i',
+        userId: 'UserID$i',
+        form: dummyForm,
+      );
+
+      List<Medicine> dummyMedicines = [
+        Medicine(
+          name: 'Medicine Name $i',
+          dosage: 'Dosage $i',
+          frequency: 'Frequency $i',
+        ),
+        // Add more Medicines if needed
+      ];
+
+      Prescription dummyPrescription = Prescription(
+        doctorId: 'DoctorID$i',
+        patientId: 'PatientID$i',
+        medicines: dummyMedicines,
+        generalHabits: 'General habits $i',
+      );
+
+      DetailedSummary dummySummary = DetailedSummary(
+        doctor: dummyDoctor,
+        patient: dummyPatient,
+        prescription: dummyPrescription,
+        text: 'Dummy text $i',
+        timestamp: DateTime.now().toString(),
+      );
+
+      dummySummaries.add(dummySummary);
+    }
+
+    return dummySummaries;
   }
 
   // void _sendMessage(String text) {

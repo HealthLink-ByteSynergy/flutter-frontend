@@ -253,6 +253,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                   );
                   break;
                 case 'doctorInfo':
+                  print("in doctorInfo case");
                   // Navigate to doctor info screen
                   Navigator.push(
                     context,
@@ -298,7 +299,8 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     );
   }
 
-  Widget _buildChatMessage(String message, bool isUser, DateTime messageTime) {
+  Widget _buildChatMessage(
+      String message, bool isDoctor, DateTime messageTime) {
     // Check if the date has changed since the last message
     bool showDate = messageTime.day != _lastUserMessageTime.day ||
         messageTime.month != _lastUserMessageTime.month ||
@@ -311,14 +313,14 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
         if (showDate) _buildDateSeparator(messageTime),
         Align(
           alignment:
-              isUser == false ? Alignment.centerRight : Alignment.centerLeft,
+              isDoctor == true ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             margin: const EdgeInsets.all(8.0),
             padding: const EdgeInsets.all(12.0),
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75),
             decoration: BoxDecoration(
-              color: isUser == false ? collaborateAppBarBgColor : blackColor,
+              color: isDoctor == false ? collaborateAppBarBgColor : blackColor,
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: Text(

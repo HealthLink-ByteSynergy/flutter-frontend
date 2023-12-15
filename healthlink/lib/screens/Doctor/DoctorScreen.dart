@@ -6,9 +6,14 @@ import 'package:healthlink/Service/auth_service.dart';
 import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Trial/temp_chat.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Doctor.dart';
+import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/Message.dart';
+import 'package:healthlink/models/Patient.dart';
+import 'package:healthlink/models/Prescription.dart';
 import 'package:healthlink/models/Summary.dart';
+import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/Doctor/doctor_settings.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
@@ -267,7 +272,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SearchScreen(
-                      summaries: getDummySummaries(), role: 'DOCTOR'),
+                      summaries: generateDummySummaries(), role: 'DOCTOR'),
                 ),
               );
             },
@@ -296,7 +301,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
 
           Flexible(
             child: SummaryListWidget(
-                summaries: getDummySummaries(), role: "DOCTOR"),
+                summaries: generateDummySummaries(), role: "DOCTOR"),
           )
           // Add more list items as needed
         ],
@@ -304,105 +309,71 @@ class _DoctorScreenState extends State<DoctorScreen> {
     );
   }
 
-  List<Summary> getDummySummaries() {
-    return [
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      Summary(
-        summaryId: '1',
-        doctorId: '123',
-        patientId: 'Doctor1',
-        summaryText: 'This is the first summary text.',
-        prescriptionId: 'Prescription1',
-        timestamp: DateTime.now(),
-      ),
-      Summary(
-        summaryId: '2',
-        doctorId: '123',
-        patientId: 'Doctor2',
-        summaryText: 'This is the second summary text.',
-        prescriptionId: 'Prescription2',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      // Add more dummy summaries as needed
-    ];
+  List<DetailedSummary> generateDummySummaries() {
+    List<DetailedSummary> dummySummaries = [];
+
+    for (int i = 0; i < 10; i++) {
+      Doctor dummyDoctor = Doctor(
+        doctorId: 'DoctorID$i',
+        userId: 'UserID$i',
+        specializations: ['Specialization $i'],
+        availability: 'Available',
+        phoneNumber: '123456789$i',
+        licenseNumber: 'License$i',
+        email: 'doctor$i@example.com',
+        username: 'doctor_$i',
+        password: 'password$i',
+      );
+
+      CustomForm dummyForm = CustomForm();
+      dummyForm.setValues(
+        'Patient Name $i',
+        '$i',
+        '123456789$i',
+        '5\'10"',
+        '150 lbs',
+        'Some Medical Condition $i',
+        'Medication $i',
+        'Recent Surgery $i',
+        'Allergy $i',
+        'Smoking Frequency $i',
+        'Drinking Frequency $i',
+        'Drugs Usage $i',
+      );
+
+      Patient dummyPatient = Patient(
+        patientId: 'PatientID$i',
+        userId: 'UserID$i',
+        form: dummyForm,
+      );
+
+      List<Medicine> dummyMedicines = [
+        Medicine(
+          name: 'Medicine Name $i',
+          dosage: 'Dosage $i',
+          frequency: 'Frequency $i',
+        ),
+        // Add more Medicines if needed
+      ];
+
+      Prescription dummyPrescription = Prescription(
+        doctorId: 'DoctorID$i',
+        patientId: 'PatientID$i',
+        medicines: dummyMedicines,
+        generalHabits: 'General habits $i',
+      );
+
+      DetailedSummary dummySummary = DetailedSummary(
+        doctor: dummyDoctor,
+        patient: dummyPatient,
+        prescription: dummyPrescription,
+        text: 'Dummy text $i',
+        timestamp: DateTime.now().toString(),
+      );
+
+      dummySummaries.add(dummySummary);
+    }
+
+    return dummySummaries;
   }
 }

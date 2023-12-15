@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class SearchScreen extends StatefulWidget {
-  final List<Summary> summaries;
+  final List<DetailedSummary> summaries;
   final String role;
 
   const SearchScreen({super.key, required this.summaries, required this.role});
@@ -14,7 +15,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late List<Summary> filteredSummaries;
+  late List<DetailedSummary> filteredSummaries;
   late TextEditingController searchController; // Add this line
 
   @override
@@ -34,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       filteredSummaries = widget.summaries
           .where((summary) =>
-              summary.doctorId
+              summary.doctor.doctorId
                   .toLowerCase()
                   .contains(searchText.toLowerCase()) ||
               summary.timestamp

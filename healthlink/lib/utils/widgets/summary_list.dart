@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/sumtodetail.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_description.dart';
 
 class SummaryListWidget extends StatelessWidget {
-  final List<Summary> summaries;
+  final List<DetailedSummary> summaries;
   final String role;
 
   const SummaryListWidget(
@@ -18,7 +19,7 @@ class SummaryListWidget extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0),
       itemCount: summaries.length,
       itemBuilder: (context, index) {
-        Summary summary = summaries[index];
+        DetailedSummary summary = summaries[index];
 
         return Container(
           margin: const EdgeInsets.all(5),
@@ -27,29 +28,28 @@ class SummaryListWidget extends StatelessWidget {
           child: ListTile(
             title: role == 'PATIENT'
                 ? Text(
-                    'Doctor: ${summary.doctorId}',
+                    'Doctor: ${summary.doctor.doctorId}',
                     style: GoogleFonts.raleway(
                         color: color4, fontWeight: FontWeight.bold),
                   )
                 : Text(
-                    'Patient: ${summary.patientId}',
+                    'Patient: ${summary.patient.patientId}',
                     style: GoogleFonts.raleway(
                         color: color4, fontWeight: FontWeight.bold),
                   ),
             subtitle: Text(
-              'Consultation Date: ${summary.timestamp.day}-${summary.timestamp.month}-${summary.timestamp.year}',
+              'Consultation Date: ${DateTime.parse(summary.timestamp).day}-${DateTime.parse(summary.timestamp).month}-${DateTime.parse(summary.timestamp).year}',
               style: GoogleFonts.raleway(color: color4),
             ),
-            // onTap: () {
-            //   // Navigate to a new screen to display detailed summary information
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => SummaryDetailsScreen(
-            //           summary: generateDetailedSummary(summary)),
-            //     ),
-            //   );
-            // },
+            onTap: () {
+              // Navigate to a new screen to display detailed summary information
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SummaryDetailsScreen(summary: summary),
+                ),
+              );
+            },
           ),
         );
       },

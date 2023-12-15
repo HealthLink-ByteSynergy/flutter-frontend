@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:healthlink/APIs.dart';
 import 'package:healthlink/Service/auth_service.dart';
-import 'package:healthlink/models/Detailed_Summary.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/Prescription.dart';
 import 'package:http/http.dart' as http;

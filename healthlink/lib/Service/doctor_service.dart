@@ -81,7 +81,7 @@ class DoctorService {
         final Doctor doctor = Doctor.fromJson(jsonResponse);
         return doctor;
       } else {
-        throw Exception('Failed to fetch doctor');
+        throw Exception('Failed to fetch doctor in doctor Service');
       }
     } catch (e) {
       throw Exception('Error: $e');
