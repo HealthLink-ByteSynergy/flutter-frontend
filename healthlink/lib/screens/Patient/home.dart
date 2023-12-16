@@ -5,7 +5,7 @@ import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/Service/user_service.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/patient_details.dart';
-import 'package:healthlink/screens/form.dart';
+import 'package:healthlink/screens/Patient/form.dart';
 import 'package:healthlink/screens/Patient/main_chat.dart';
 import 'package:healthlink/utils/colors.dart';
 
@@ -163,37 +163,53 @@ class _HomeBodyState extends State<HomeBody> {
                             color: color2,
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          child: ListTile(
-                            title: Text(
-                              chatList[index].form?.name ?? 'Loading',
-                              style: GoogleFonts.raleway(
-                                color: blackColor,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
-                                    patientId: chatList[index].patientId!,
-                                    patientUserId: patientUserId,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: ListTile(
+                                  title: Text(
+                                    chatList[index].form?.name ?? 'Loading',
+                                    style: GoogleFonts.raleway(
+                                      color: blackColor,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                          patientId: chatList[index].patientId!,
+                                          patientUserId: patientUserId,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: blackColor,
+                                ),
+                                onPressed: () {
+                                  _showConfirmationDialog(
+                                      context, chatList[index].patientId!);
+                                },
+                              ),
+                            ],
                           ),
                         );
                       },
                     ),
                   ),
-                ),
+                )
               ],
             ),
 
       floatingActionButton: chatList.isEmpty
-          ? null // If chatList is empty, no FAB
+          ? null // If chatList is empty
           : SizedBox(
               width: 120,
               height: 60,
@@ -225,6 +241,83 @@ class _HomeBodyState extends State<HomeBody> {
                     borderRadius: BorderRadius.circular(20)),
               ),
             ),
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context, String patientId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete this chat?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showDeleteDialog(context, patientId);
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, String patientId) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Deleting...'),
+          content: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // Future.delayed(Duration(seconds: 0), () async {
+    Map<String, dynamic> result =
+        await PatientService().deletePatient(patientId);
+    String res = 'failure';
+    if (result['success']) {
+      res = 'success';
+    }
+    Navigator.pop(context);
+    _showResultDialog(context, res);
+    // });
+  }
+
+  void _showResultDialog(BuildContext context, String result) {
+    String message = result == 'success'
+        ? 'Chat deleted successfully.'
+        : 'Failed to delete chat.';
+    IconData icon = result == 'success' ? Icons.check_circle : Icons.error;
+    Color iconColor = result == 'success' ? Colors.green : Colors.red;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Icon(icon, color: iconColor),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

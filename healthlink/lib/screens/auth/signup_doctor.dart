@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthlink/Service/auth_service.dart'; // Import your AuthMethods class
 import 'package:healthlink/models/Doctor.dart';
-import 'package:healthlink/screens/home.dart';
+import 'package:healthlink/screens/Patient/home.dart';
 import 'package:healthlink/utils/colors.dart'; // Import your color utils file
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/screens/auth/login.dart';

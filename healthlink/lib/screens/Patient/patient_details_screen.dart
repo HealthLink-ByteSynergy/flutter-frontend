@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/models/patient_details.dart';
-import 'package:healthlink/screens/form.dart';
+import 'package:healthlink/screens/Patient/form.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class UserDetailsScreen extends StatelessWidget {

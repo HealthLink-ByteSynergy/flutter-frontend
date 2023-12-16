@@ -116,7 +116,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
         this.widget.isDoctor ? this.widget.doctorId : this.widget.patientId;
     try {
       List<Message>? fetchedMessages =
-          await _messageService.getMessagesFromBot(id);
+          await _messageService.getMessagesFromUser(id);
 
       if (fetchedMessages != null) {
         setState(() {
@@ -165,6 +165,8 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           await _messageService.saveMessageToUser(newMessage);
 
       if (result!['data'] == 'success') {
+        _fetchMessages();
+      } else {
         _fetchMessages();
       }
     } catch (e) {
@@ -410,23 +412,6 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       ),
     );
   }
-
-  // void _sendMessage(String text) {
-  //   setState(() {
-  //     _isInputEmpty = true;
-  //     _botReplied = false; // User has sent a message, waiting for bot reply
-  //   });
-  //   _messageController.clear();
-
-  //   // Simulate bot's reply after a delay (you can replace this with actual logic)
-  //   Future.delayed(const Duration(seconds: 2), () {
-  //     setState(() {
-  //       _botReplied = true; // Bot has replied, enable input and send button
-  //     });
-  //     // Simulate displaying bot's reply
-  //     _buildChatMessage('Bot reply', false, DateTime.now());
-  //   });
-  // }
 }
 
 void main() {

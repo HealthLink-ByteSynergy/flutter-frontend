@@ -13,7 +13,7 @@ import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
 import 'package:healthlink/screens/Temporary_Chat/consultation_chat_screen.dart';
-import 'package:healthlink/screens/home.dart';
+import 'package:healthlink/screens/Patient/home.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:healthlink/utils/widgets/summary_list.dart';
 

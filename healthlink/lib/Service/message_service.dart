@@ -114,7 +114,7 @@ class MessageService {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.post(
           Uri.parse(
-              '$messageURL/getAllMessagesBot'), // Assuming the endpoint structure
+              '$messageURL/getAllMessages'), // Assuming the endpoint structure
           headers: {
             'Authorization': 'Bearer $jwtToken',
             'Content-Type': 'application/json',
@@ -126,7 +126,8 @@ class MessageService {
             }
           }));
 
-      // print(response.body);
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         print(jsonResponse);

@@ -7,7 +7,7 @@ import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/user_service.dart';
 import 'package:healthlink/screens/Doctor/DoctorScreen.dart';
 import 'package:healthlink/screens/auth/role_signup.dart';
-import 'package:healthlink/screens/home.dart';
+import 'package:healthlink/screens/Patient/home.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -7,7 +7,7 @@ import 'package:healthlink/Service/user_service.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/screens/Doctor/DoctorScreen.dart';
 import 'package:healthlink/screens/auth/login.dart';
-import 'package:healthlink/screens/home.dart';
+import 'package:healthlink/screens/Patient/home.dart';
 
 void main() => runApp(const MyApp());
 
