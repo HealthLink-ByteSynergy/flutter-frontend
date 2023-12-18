@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/consultation_service.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/models/DetailedSummary.dart';
@@ -8,7 +9,7 @@ import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Prescription.dart';
-import 'package:healthlink/models/Summary.dart';
+// import 'package:healthlink/models/Summary.dart';
 import 'package:healthlink/models/patient_details.dart';
 import 'package:healthlink/screens/Patient/search_summaries_screen.dart';
 import 'package:healthlink/screens/Patient/patient_settings.dart';
@@ -19,11 +20,9 @@ import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class ChatScreen extends StatefulWidget {
   final String patientId;
-  final String patientUserId;
+  // final String patientUserId;
 
-  const ChatScreen(
-      {Key? key, required this.patientId, required this.patientUserId})
-      : super(key: key);
+  const ChatScreen({Key? key, required this.patientId}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -416,15 +415,55 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 // Method to navigate to the chat screen with the selected doctor
-  void _navigateToChatScreenWithDoctor(String doctorId, String patientId) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
+  // void _navigateToChatScreenWithDoctor(String doctorId, String patientId) {
+
+  //   Navigator.of(context).pushReplacement(
+  //     MaterialPageRoute(
+  //         builder: (context) => ConsultationChatScreen(
+  //               isDoctor: false,
+  //               doctorId: doctorId,
+  //               patientId: patientId,
+  //             )),
+  //   );
+  // }
+
+  void _navigateToChatScreenWithDoctor(
+      String doctorId, String patientId, String docPatientId) async {
+    // Assuming there's a function in the service class that adds a consultation chat
+    Map<String, dynamic> result = await ConsultationChatService()
+        .saveConsultationChat(docPatientId, patientId);
+
+    if (result['success'] == true) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
           builder: (context) => ConsultationChatScreen(
-                isDoctor: false,
-                doctorId: doctorId,
-                patientId: patientId,
-              )),
-    );
+            isDoctor: false,
+            doctorId: doctorId,
+            patientId: patientId,
+            doctorPatientId: docPatientId,
+          ),
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Unable to Contact Doctor'),
+            content: Text(
+                'Sorry, we are unable to establish contact with the doctor at the moment.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   void _showDoctorListDialog() {
@@ -546,11 +585,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {
-                      _navigateToChatScreenWithDoctor(
-                          doctor.doctorId, this.widget.patientId
-
-                          // Replace with patient ID
-                          );
+                      _navigateToChatScreenWithDoctor(doctor.doctorId,
+                          this.widget.patientId, doctor.docPatientId);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: color4,
@@ -600,6 +636,7 @@ class _ChatScreenState extends State<ChatScreen> {
         doctorId: 'DoctorID$i',
         userId: 'UserID$i',
         specializations: ['Specialization $i'],
+        docPatientId: 'doctorPatientId $i',
         availability: 'Available',
         phoneNumber: '123456789$i',
         licenseNumber: 'License$i',
@@ -659,23 +696,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return dummySummaries;
   }
-
-  // void _sendMessage(String text) {
-  //   setState(() {
-  //     _isInputEmpty = true;
-  //     _botReplied = false; // User has sent a message, waiting for bot reply
-  //   });
-  //   _messageController.clear();
-
-  //   // Simulate bot's reply after a delay (you can replace this with actual logic)
-  //   Future.delayed(const Duration(seconds: 2), () {
-  //     setState(() {
-  //       _botReplied = true; // Bot has replied, enable input and send button
-  //     });
-  //     // Simulate displaying bot's reply
-  //     _buildChatMessage('Bot reply', false, DateTime.now());
-  //   });
-  // }
 }
 
 // void main() {

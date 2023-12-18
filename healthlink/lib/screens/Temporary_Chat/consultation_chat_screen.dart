@@ -1,15 +1,19 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/auth_service.dart';
+import 'package:healthlink/Service/consultation_service.dart';
 import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/ConsultationChat.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Prescription.dart';
+import 'package:healthlink/screens/Doctor/DoctorScreen.dart';
+import 'package:healthlink/screens/Patient/main_chat.dart';
 import 'package:healthlink/screens/Temporary_Chat/doctor_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/patient_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/prescription_screen.dart';
@@ -20,12 +24,14 @@ class ConsultationChatScreen extends StatefulWidget {
   final bool isDoctor;
   final String patientId;
   final String doctorId;
+  final String doctorPatientId;
 
   const ConsultationChatScreen(
       {Key? key,
       required this.isDoctor,
       required this.patientId,
-      required this.doctorId})
+      required this.doctorId,
+      required this.doctorPatientId})
       : super(key: key);
 
   @override
@@ -35,8 +41,8 @@ class ConsultationChatScreen extends StatefulWidget {
 
 class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   late Prescription prescriptionTosave = Prescription(
-    doctorId: '', // Default values or empty strings
-    patientId: '',
+    doctorId: this.widget.doctorId, // Default values or empty strings
+    patientId: this.widget.patientId,
     medicines: [],
     generalHabits: '',
   );
@@ -44,12 +50,15 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   List<Message> messages = [];
   final MessageService _messageService = MessageService();
+  final ConsultationChatService _consultationChatService =
+      ConsultationChatService();
   bool _isInputEmpty = true;
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
   String currentUserId = "";
   Patient? patient;
   Doctor? doctor;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -63,7 +72,11 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     _setCurrentUserId();
     _fetchPatientDetails();
     _fetchDoctorDetails();
-    // _fetchMessages();
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      _fetchMessages();
+      _fetchChatByDoctorIdAndPatientId();
+    });
+    _fetchMessages();
   }
 
   void _setCurrentUserId() async {
@@ -112,13 +125,14 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   }
 
   void _fetchMessages() async {
-    String id =
-        this.widget.isDoctor ? this.widget.doctorId : this.widget.patientId;
     try {
       List<Message>? fetchedMessages =
-          await _messageService.getMessagesFromUser(id);
+          await _messageService.getMessagesFromUser(
+              this.widget.patientId, this.widget.doctorPatientId);
 
-      if (fetchedMessages != null) {
+      print("completed");
+      if (fetchedMessages != null &&
+          fetchedMessages.length != messages.length) {
         setState(() {
           messages = fetchedMessages;
         });
@@ -128,12 +142,26 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     }
   }
 
+  void _fetchChatByDoctorIdAndPatientId() async {
+    try {
+      List<ConsultationChat> consultationChats = await _consultationChatService
+          .getConsultationChatByDoctorIdAndPatientId(
+              widget.doctorPatientId, widget.patientId);
+
+      if (consultationChats.isEmpty) {
+        // _handleEmptyChatList();
+      }
+    } catch (e) {
+      print('Error fetching chat: $e');
+    }
+  }
+
   void _sendMessage(String text) async {
     String senId = this.widget.isDoctor
-        ? this.widget.doctorId ?? 'n/a'
+        ? this.widget.doctorPatientId ?? 'n/a'
         : this.widget.patientId ?? 'n/a';
     String recId = !this.widget.isDoctor
-        ? this.widget.doctorId ?? 'n/a'
+        ? this.widget.doctorPatientId ?? 'n/a'
         : this.widget.patientId ?? 'n/a';
     setState(() {
       _isInputEmpty = true;
@@ -165,6 +193,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           await _messageService.saveMessageToUser(newMessage);
 
       if (result!['data'] == 'success') {
+        print("yes");
         _fetchMessages();
       } else {
         _fetchMessages();
@@ -266,9 +295,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                   );
                   break;
                 case 'exitChat':
-                  // Perform exit chat action
-                  // For example, pop back to previous screens or close the chat
-                  // _exitChat()
+                  _handleExitChat();
                   break;
               }
             },
@@ -290,8 +317,12 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                 DateTime timestamp = DateTime.parse(timestampString);
                 // Build the chat message using the actual message object
                 // print(DateTime.now());
-                return _buildChatMessage(message.text,
-                    message.senderId == widget.patientId, timestamp);
+                return _buildChatMessage(
+                    message.text,
+                    message.senderId == widget.patientId && !widget.isDoctor ||
+                        widget.isDoctor &&
+                            message.senderId == doctor?.docPatientId,
+                    timestamp);
               },
             ),
           ),
@@ -412,14 +443,60 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       ),
     );
   }
+
+  void _handleExitChat() async {
+    // Open a dialog box indicating processing
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Processing Exit Chat'),
+          content: CircularProgressIndicator(), // Loading symbol
+        );
+      },
+    );
+
+    try {
+      Map<String, dynamic>? exitResult = await _messageService
+          .deleteMessagesBetweenUsers(widget.patientId, widget.doctorPatientId);
+
+      //pop the dialog box
+      Navigator.of(context).pop();
+      if (exitResult != null && exitResult["data"] == "success") {
+        !widget.isDoctor
+            ? Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ChatScreen(patientId: widget.patientId)),
+              )
+            : Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DoctorScreen(doctorId: widget.doctorId)),
+              );
+      } else {
+        // Handle unsuccessful exit process
+        // Display an error message or take appropriate action
+      }
+    } catch (e) {
+      // Handle exceptions during the exit process
+      // Display an error message or take appropriate action
+      print('Error during exit chat: $e');
+      Navigator.of(context).pop();
+    }
+  }
 }
 
 void main() {
   runApp(const MaterialApp(
     home: ConsultationChatScreen(
       isDoctor: true,
-      patientId: "018c536f-fc98-71cc-bd79-b58ca17ffa35",
-      doctorId: "018c54de-8da5-744f-93ce-f4aef174df08",
+      patientId: "018c7b2b-9ec6-71a8-af69-b76a0561ba6b",
+      doctorId: "018c7b30-78a4-7cf2-8b0d-4dc8238f585d",
+      doctorPatientId: "018c7b30-7883-7ed1-ab7c-42343d2c57df",
     ),
   ));
 }

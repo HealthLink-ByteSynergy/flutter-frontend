@@ -73,6 +73,7 @@ class _DoctorSignupScreenState extends State<DoctorSignupScreen> {
     Doctor doctor = Doctor(
         doctorId: '',
         userId: '',
+        docPatientId: '',
         specializations: _selectedspecializations,
         availability: 'not available',
         phoneNumber: _numberController.text,

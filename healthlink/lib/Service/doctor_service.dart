@@ -12,7 +12,7 @@ class DoctorService {
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.put(
-        Uri.parse('$doctorURL/update/${doctor.doctorId}'),
+        Uri.parse('$doctorURL/update'),
         headers: {
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json; charset=UTF-8',

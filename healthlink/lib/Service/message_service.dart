@@ -47,14 +47,14 @@ class MessageService {
     Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
-      final response = await http.post(Uri.parse('$messageURL/saveUserToUser'),
+      final response = await http.post(Uri.parse('$messageURL/saveUsertoUser'),
           headers: <String, String>{
             'Authorization': 'Bearer $jwtToken',
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode(
             {
-              "previousMessageId": message.previousMessageId,
+              // "previousMessageId": message.previousMessageId,
               "senPatientEntity": {"patientId": message.senderId},
               "recPatientEntity": {"patientId": message.receiverId},
               "text": message.text
@@ -69,7 +69,6 @@ class MessageService {
       }
     } catch (error) {
       print(error);
-      // Handle other errors like network issues
     }
 
     return result;
@@ -79,19 +78,17 @@ class MessageService {
     List<Message> messages = [];
     try {
       final String? jwtToken = await AuthService().getToken();
-      final response = await http.post(
-          Uri.parse(
-              '$messageURL/getAllMessagesBot'), // Assuming the endpoint structure
-          headers: {
-            'Authorization': 'Bearer $jwtToken',
-            'Content-Type': 'application/json',
-            // Add other necessary headers here if required by your API
-          },
-          body: json.encode({
-            "senPatientEntity": {
-              "patientId": patientId,
-            }
-          }));
+      final response =
+          await http.post(Uri.parse('$messageURL/getAllMessagesBot'),
+              headers: {
+                'Authorization': 'Bearer $jwtToken',
+                'Content-Type': 'application/json',
+              },
+              body: json.encode({
+                "senPatientEntity": {
+                  "patientId": patientId,
+                }
+              }));
 
       // print(response.body);
       if (response.statusCode == 200) {
@@ -108,13 +105,13 @@ class MessageService {
     }
   }
 
-  Future<List<Message>?> getMessagesFromUser(String id) async {
+  Future<List<Message>?> getMessagesFromUser(
+      String patientId, String doctorId) async {
     List<Message> messages = [];
+    print("entered getMessages");
     try {
       final String? jwtToken = await AuthService().getToken();
-      final response = await http.post(
-          Uri.parse(
-              '$messageURL/getAllMessages'), // Assuming the endpoint structure
+      final response = await http.post(Uri.parse('$messageURL/getAllMessages'),
           headers: {
             'Authorization': 'Bearer $jwtToken',
             'Content-Type': 'application/json',
@@ -122,15 +119,20 @@ class MessageService {
           },
           body: json.encode({
             "senPatientEntity": {
-              "patientId": id,
-            }
+              "patientId": patientId,
+            },
+            "recPatientEntity": {"patientId": doctorId}
           }));
 
-      print(response.statusCode);
-      print(response.body);
+      print({
+        "senPatientEntity": {
+          "patientId": patientId,
+        },
+        "recPatientEntity": {"patientId": doctorId}
+      }.toString());
+
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        print(jsonResponse);
         messages = jsonResponse.map((json) => Message.fromJson(json)).toList();
 
         return messages;
@@ -147,20 +149,18 @@ class MessageService {
     List<Doctor> doctors = [];
     try {
       final String? jwtToken = await AuthService().getToken();
-      final response = await http.post(
-          Uri.parse(
-              '$messageURL/recommendSpecialist'), // Assuming the endpoint structure
-          headers: {
-            'Authorization': 'Bearer $jwtToken',
-            'Content-Type': 'application/json',
-            // Add other necessary headers here if required by your API
-          },
-          body: json.encode({
-            "previousMessageId": prevMessageID,
-            "senPatientEntity": {
-              "patientId": patientId,
-            }
-          }));
+      final response =
+          await http.post(Uri.parse('$messageURL/recommendSpecialist'),
+              headers: {
+                'Authorization': 'Bearer $jwtToken',
+                'Content-Type': 'application/json',
+              },
+              body: json.encode({
+                "previousMessageId": prevMessageID,
+                "senPatientEntity": {
+                  "patientId": patientId,
+                }
+              }));
 
       print(response.body);
       if (response.statusCode == 200) {
@@ -178,5 +178,34 @@ class MessageService {
     } catch (e) {
       throw Exception('Error: $e');
     }
+  }
+
+  Future<Map<String, dynamic>?> deleteMessagesBetweenUsers(
+      String patientId, String docPatientId) async {
+    Map<String, dynamic> result = {};
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.delete(Uri.parse('$messageURL/deleteAll'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $jwtToken',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(
+            {
+              "senPatientEntity": {"patientId": patientId},
+              "recPatientEntity": {"patientId": docPatientId},
+            },
+          ));
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        result['data'] = 'success';
+      } else {
+        result['data'] = 'failure';
+      }
+    } catch (error) {
+      result['data'] = error.toString();
+    }
+    return result;
   }
 }

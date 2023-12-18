@@ -94,7 +94,6 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => ChatScreen(
               patientId: result['data']['patientId'],
-              patientUserId: this.widget.userId,
             ),
           ));
         } else {

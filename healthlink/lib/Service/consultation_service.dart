@@ -6,20 +6,25 @@ import 'package:healthlink/models/Patient.dart';
 import 'package:http/http.dart' as http;
 
 class ConsultationChatService {
-  String ConsultationChatURL = API.consultationChatEndpoint;
+  String ConsultationChatURL = API.baseURL + API.consultationChatEndpoint;
+  String deleteConsultationChatURL =
+      API.baseURL + API.consultationChatEndpoint + '/deleteTempChat';
 
   Future<Map<String, dynamic>> saveConsultationChat(
-      ConsultationChat consultationChat) async {
+      String doctorPatientId, String patientId) async {
     Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.post(
-        Uri.parse('$ConsultationChatURL/addtempchat'),
+        Uri.parse('$ConsultationChatURL/addTempChat'),
         headers: <String, String>{
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(consultationChat.toJson()),
+        body: jsonEncode({
+          "patientEntity": {"patientId": patientId},
+          "docPatientEntity": {"patientId": doctorPatientId}
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -40,19 +45,50 @@ class ConsultationChatService {
     return result;
   }
 
+  Future<List<ConsultationChat>> getConsultationChatByDoctorIdAndPatientId(
+      String doctorId, String patientId) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response =
+          await http.post(Uri.parse('${ConsultationChatURL}/getTempChat'),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $jwtToken',
+              },
+              body: jsonEncode({
+                "patientEntity": {"patientId": patientId},
+                "docPatientEntity": {"patientId": doctorId}
+              }));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = json.decode(response.body);
+        List<ConsultationChat> consultationChats = jsonResponse
+            .map((json) => ConsultationChat.fromJson(json))
+            .toList();
+        return consultationChats;
+      } else {
+        print('why');
+        return [];
+        // throw Exception('Failed to fetch ConsultationChats');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
   Future<List<ConsultationChat>> getConsultationChatByDoctorId(
-      String doctorId) async {
+      String doctorPatientId) async {
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.get(
-        Uri.parse('${ConsultationChatURL}/id/$doctorId'),
+        Uri.parse('${ConsultationChatURL}/docpatientid/$doctorPatientId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
         },
       );
 
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         List<ConsultationChat> consultationChats = jsonResponse
@@ -96,5 +132,48 @@ class ConsultationChatService {
     }
   }
 
-  Future<void> deleteConsultationChat(String id) async {}
+  Future<Map<String, dynamic>> deleteConsultationChat(
+      String patientId, String doctorId) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.delete(
+          Uri.parse(
+              '$deleteConsultationChatURL'), // Replace with your appropriate URL
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $jwtToken',
+          },
+          body: jsonEncode({
+            "patientEntity": {"patientId": patientId},
+            "docPatientEntity": {"patientId": doctorId}
+          }));
+
+      if (response.statusCode == 200) {
+        // If the delete operation was successful
+        print(
+            'Consultation chat with doctorId: $doctorId and patientId: $patientId deleted successfully');
+        return {
+          'success': true,
+          'message':
+              'Consultation chat with doctorId: $doctorId and patientId: $patientId deleted successfully'
+        };
+      } else {
+        // If there was an issue with the delete operation
+        print(
+            'Failed to delete consultation chat with doctorId: $doctorId and patientId: $patientId. Status code: ${response.statusCode}');
+        return {
+          'success': false,
+          'message':
+              'Failed to delete consultation chat with  doctorId: $doctorId and patientId: $patientId'
+        };
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the API call
+      print('Exception during delete operation: $e');
+      return {
+        'success': false,
+        'message': 'Exception occurred during delete operation'
+      };
+    }
+  }
 }

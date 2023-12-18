@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/auth_service.dart';
+import 'package:healthlink/Service/consultation_service.dart';
 import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
-import 'package:healthlink/Trial/temp_chat.dart';
+import 'package:healthlink/models/ConsultationChat.dart';
 import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Medicine.dart';
@@ -23,11 +26,9 @@ import 'package:healthlink/utils/widgets/summary_list.dart';
 
 class DoctorScreen extends StatefulWidget {
   final String doctorId;
-  final String doctorUserId;
+  // final String doctorUserId;
 
-  const DoctorScreen(
-      {Key? key, required this.doctorId, required this.doctorUserId})
-      : super(key: key);
+  const DoctorScreen({Key? key, required this.doctorId}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -42,6 +43,10 @@ class _DoctorScreenState extends State<DoctorScreen> {
   DateTime _lastUserMessageTime = DateTime.now();
   bool _botReplied = true; // Flag to track whether the bot has replied
   Doctor? doctor;
+  List<ConsultationChat> _consultationChats = [];
+
+  ConsultationChatService _consultationChatService =
+      new ConsultationChatService();
 
   List<String> patients = [
     'Patient 1',
@@ -50,12 +55,30 @@ class _DoctorScreenState extends State<DoctorScreen> {
     'Patient 4',
     'Patient 5',
   ];
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     _fetchDoctorDetails();
     _fetchMessages();
+
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      _fetchConsultationChats();
+    });
+  }
+
+  void _fetchConsultationChats() async {
+    try {
+      List<ConsultationChat> consultationChats = await _consultationChatService
+          .getConsultationChatByDoctorId(doctor?.docPatientId ?? "N/A");
+
+      if (consultationChats != _consultationChats) {
+        setState(() {
+          _consultationChats = consultationChats;
+        });
+      }
+    } catch (e) {}
   }
 
   void _fetchDoctorDetails() async {
@@ -111,18 +134,18 @@ class _DoctorScreenState extends State<DoctorScreen> {
         ),
       ),
       drawer: _buildDrawer(),
-      body: patients.isEmpty
-          ? Center(child: Text('No patients available'))
+      body: _consultationChats.isEmpty
+          ? Center(child: Text("There are no consultation requests"))
           : ListView.builder(
-              itemCount: patients.length,
+              itemCount: _consultationChats.length,
               itemBuilder: (context, index) {
-                return _buildPatientCard(patients[index]);
+                return _buildPatientCard(_consultationChats[index].patient);
               },
             ),
     );
   }
 
-  Widget _buildPatientCard(String patientName) {
+  Widget _buildPatientCard(Patient patient) {
     return Card(
       margin: EdgeInsets.all(8.0),
       child: Padding(
@@ -131,7 +154,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '$patientName needs your help!',
+              "${patient.form!.name} needs your help!",
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16.0),
@@ -144,7 +167,10 @@ class _DoctorScreenState extends State<DoctorScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => ConsultationChatScreen(
-                            isDoctor: true, patientId: "", doctorId: ""),
+                            isDoctor: true,
+                            patientId: patient.patientId ?? "N/A",
+                            doctorId: this.widget.doctorId,
+                            doctorPatientId: doctor?.docPatientId ?? "N/A"),
                       ),
                     );
                   },
@@ -154,7 +180,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
                   onPressed: () {
                     setState(() {
                       // Remove the patient from the list
-                      patients.remove(patientName);
+                      // patients.remove(patientName);
                     });
                   },
                   child: Text('Reject'),
@@ -167,40 +193,6 @@ class _DoctorScreenState extends State<DoctorScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildChatMessage(String message, bool isUser, DateTime messageTime) {
-    // Check if the date has changed since the last message
-    bool showDate = messageTime.day != _lastUserMessageTime.day ||
-        messageTime.month != _lastUserMessageTime.month ||
-        messageTime.year != _lastUserMessageTime.year;
-
-    _lastUserMessageTime = messageTime; // Update the last user message time
-
-    return Column(
-      children: [
-        if (showDate) _buildDateSeparator(messageTime),
-        Align(
-          alignment:
-              isUser == false ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            margin: const EdgeInsets.all(8.0),
-            padding: const EdgeInsets.all(12.0),
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.75),
-            decoration: BoxDecoration(
-              color: isUser == false ? collaborateAppBarBgColor : blackColor,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: Text(
-              message,
-              style: GoogleFonts.raleway(
-                  color: color4, fontSize: 15, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -317,6 +309,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
         doctorId: 'DoctorID$i',
         userId: 'UserID$i',
         specializations: ['Specialization $i'],
+        docPatientId: 'DocPatientId $i',
         availability: 'Available',
         phoneNumber: '123456789$i',
         licenseNumber: 'License$i',

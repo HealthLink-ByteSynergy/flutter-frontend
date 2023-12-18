@@ -181,7 +181,6 @@ class _HomeBodyState extends State<HomeBody> {
                                       MaterialPageRoute(
                                         builder: (context) => ChatScreen(
                                           patientId: chatList[index].patientId!,
-                                          patientUserId: patientUserId,
                                         ),
                                       ),
                                     );

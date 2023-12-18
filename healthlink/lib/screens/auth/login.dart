@@ -100,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => DoctorScreen(
                   doctorId: doctorDetails.doctorId,
-                  doctorUserId: userDetails['id'],
                 ),
               ));
             }

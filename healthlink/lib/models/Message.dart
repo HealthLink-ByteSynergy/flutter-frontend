@@ -21,13 +21,14 @@ class Message {
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-        messageId: json['messageId'],
-        previousMessageId: json['previousMessageId'],
-        senderId: json["senPatientEntity"]['patientId'],
-        receiverId: json['recPatientEntity']['patientId'],
-        text: json['text'],
-        messageType: json['messageType'],
-        timestamp: json['date'],
-        summary: json['summary']);
+      messageId: json['messageId'] ?? '',
+      previousMessageId: json['previousMessageId'] ?? '',
+      senderId: json["senPatientEntity"]?['patientId'] ?? '',
+      receiverId: json['recPatientEntity']?['patientId'] ?? '',
+      text: json['text'] ?? '',
+      messageType: json['messageType'] ?? '',
+      timestamp: json['date'] ?? DateTime.now().toIso8601String(),
+      summary: json['summary'] ?? '',
+    );
   }
 }
