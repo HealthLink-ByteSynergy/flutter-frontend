@@ -53,9 +53,8 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   final ConsultationChatService _consultationChatService =
       ConsultationChatService();
   bool _isInputEmpty = true;
-  DateTime _lastUserMessageTime = DateTime.now();
-  bool _botReplied = true; // Flag to track whether the bot has replied
-  String currentUserId = "";
+  DateTime prevMessageTimestamp = DateTime.now();
+  bool _botReplied = true;
   Patient? patient;
   Doctor? doctor;
   late Timer _timer;
@@ -69,7 +68,6 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       prescriptionTosave.generalHabits = '';
       prescriptionTosave.patientId = widget.patientId;
     });
-    _setCurrentUserId();
     _fetchPatientDetails();
     _fetchDoctorDetails();
     _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
@@ -77,21 +75,6 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       _fetchChatByDoctorIdAndPatientId();
     });
     _fetchMessages();
-  }
-
-  void _setCurrentUserId() async {
-    try {
-      String? userId = await AuthService().getUserId();
-      setState(() {
-        if (userId != null) {
-          currentUserId = userId;
-        }
-        // print('entered');
-      });
-    } catch (e) {
-      // Handle exceptions during data fetch
-      // print('Error fetching patient data: $e');
-    }
   }
 
   void _fetchPatientDetails() async {
@@ -149,11 +132,45 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
               widget.doctorPatientId, widget.patientId);
 
       if (consultationChats.isEmpty) {
-        // _handleEmptyChatList();
+        String displayMessage = widget.isDoctor
+            ? "${patient?.form?.name ?? "patient"} has quit the chat"
+            : "${doctor?.username ?? "doctor"} has quit the chat";
+        showCustomDialog(context, displayMessage);
       }
     } catch (e) {
       print('Error fetching chat: $e');
     }
+  }
+
+  void showCustomDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                widget.isDoctor
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DoctorScreen(doctorId: widget.doctorId)),
+                      )
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ChatScreen(patientId: widget.patientId)),
+                      );
+              },
+              child: Text('Home'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _sendMessage(String text) async {
@@ -308,21 +325,24 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: messages.length, // Use the messages list length
+              itemCount: messages.length,
               itemBuilder: (BuildContext context, int index) {
-                Message message =
-                    messages[index]; // Get the message at this index
+                Message message = messages[index];
                 String timestampString = message.timestamp;
-
                 DateTime timestamp = DateTime.parse(timestampString);
-                // Build the chat message using the actual message object
-                // print(DateTime.now());
+                DateTime prevMessageTimestamp = DateTime.now();
+                if (index != 0) {
+                  prevMessageTimestamp =
+                      DateTime.parse(messages[index - 1].timestamp);
+                }
                 return _buildChatMessage(
                     message.text,
                     message.senderId == widget.patientId && !widget.isDoctor ||
                         widget.isDoctor &&
                             message.senderId == doctor?.docPatientId,
-                    timestamp);
+                    timestamp,
+                    index == 0,
+                    prevMessageTimestamp);
               },
             ),
           ),
@@ -332,14 +352,18 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     );
   }
 
-  Widget _buildChatMessage(
-      String message, bool isDoctor, DateTime messageTime) {
+  Widget _buildChatMessage(String message, bool isDoctor, DateTime messageTime,
+      bool isFirstMessage, DateTime prevMessageTimestamp) {
     // Check if the date has changed since the last message
-    bool showDate = messageTime.day != _lastUserMessageTime.day ||
-        messageTime.month != _lastUserMessageTime.month ||
-        messageTime.year != _lastUserMessageTime.year;
 
-    _lastUserMessageTime = messageTime; // Update the last user message time
+    bool showDate = false;
+    if (isFirstMessage) {
+      showDate = true;
+    } else {
+      showDate = messageTime.day != prevMessageTimestamp.day ||
+          messageTime.month != prevMessageTimestamp.month ||
+          messageTime.year != prevMessageTimestamp.year;
+    }
 
     return Column(
       children: [
@@ -458,12 +482,13 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     );
 
     try {
-      Map<String, dynamic>? exitResult = await _messageService
+      Map<String, dynamic>? deleteMessagesResults = await _messageService
           .deleteMessagesBetweenUsers(widget.patientId, widget.doctorPatientId);
 
       //pop the dialog box
       Navigator.of(context).pop();
-      if (exitResult != null && exitResult["data"] == "success") {
+      if (deleteMessagesResults != null &&
+          deleteMessagesResults["data"] == "success") {
         !widget.isDoctor
             ? Navigator.pushReplacement(
                 context,

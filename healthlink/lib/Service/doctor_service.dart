@@ -10,6 +10,7 @@ class DoctorService {
   Future<Map<String, dynamic>> updateDoctor(Doctor doctor) async {
     Map<String, dynamic> result = {};
     try {
+      print("inside update doctor");
       final String? jwtToken = await AuthService().getToken();
       final response = await http.put(
         Uri.parse('$doctorURL/update'),
@@ -17,7 +18,8 @@ class DoctorService {
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(doctor.toJson()),
+        body: jsonEncode(
+            {"doctorId": doctor.doctorId, "isAvailable": doctor.availability}),
       );
 
       print(response.body);
@@ -33,6 +35,34 @@ class DoctorService {
       result['error'] = 'Error occurred: $error';
     }
     return result;
+  }
+
+  Future<Doctor?> getDoctorByPatientId(String doctorPatientId) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      // final String? userId = await AuthService().getUserId();
+      final response = await http.get(
+        Uri.parse(
+            '$doctorURL/getdocidbypatientid/$doctorPatientId'), // Assuming the endpoint structure
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final dynamic jsonResponse = json.decode(response.body);
+        print(jsonResponse);
+        final Doctor doctor = Doctor.fromJson(jsonResponse);
+        // print(doctor.username);
+        return doctor;
+      } else {
+        throw Exception('Failed to fetch doctor');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
   }
 
   Future<Doctor?> getDoctorByUserId() async {

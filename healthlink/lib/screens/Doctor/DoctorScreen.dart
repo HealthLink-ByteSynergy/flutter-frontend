@@ -135,7 +135,16 @@ class _DoctorScreenState extends State<DoctorScreen> {
       ),
       drawer: _buildDrawer(),
       body: _consultationChats.isEmpty
-          ? Center(child: Text("There are no consultation requests"))
+          ? Padding(
+              padding: EdgeInsets.all(20.0), // Adjust the padding as needed
+              child: Center(
+                child: Text(
+                  "There are no consultation requests",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: blackColor, fontSize: 30),
+                ),
+              ),
+            )
           : ListView.builder(
               itemCount: _consultationChats.length,
               itemBuilder: (context, index) {
@@ -177,11 +186,14 @@ class _DoctorScreenState extends State<DoctorScreen> {
                   child: Text('Join'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      // Remove the patient from the list
-                      // patients.remove(patientName);
-                    });
+                  onPressed: () async {
+                    Map<String, dynamic> result =
+                        await _consultationChatService.deleteConsultationChat(
+                            doctor?.docPatientId ?? "N/A",
+                            patient.patientId ?? "N/A");
+                    if (result['success']) {
+                      _fetchConsultationChats();
+                    }
                   },
                   child: Text('Reject'),
                   style: ElevatedButton.styleFrom(

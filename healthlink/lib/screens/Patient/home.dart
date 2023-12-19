@@ -118,6 +118,7 @@ class _HomeBodyState extends State<HomeBody> {
                             builder: (context) => MedicalInfoForm(
                                   customForm: CustomForm(),
                                   userId: patientUserId,
+                                  isNewPatient: true,
                                 )),
                       );
                     },
@@ -220,6 +221,7 @@ class _HomeBodyState extends State<HomeBody> {
                         builder: (context) => MedicalInfoForm(
                               customForm: CustomForm(),
                               userId: patientUserId,
+                              isNewPatient: true,
                             )),
                   );
                 },

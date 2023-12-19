@@ -109,7 +109,7 @@ class ConsultationChatService {
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.get(
-        Uri.parse('${ConsultationChatURL}/id/$patientId'),
+        Uri.parse('${ConsultationChatURL}/patientid/$patientId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
@@ -133,7 +133,7 @@ class ConsultationChatService {
   }
 
   Future<Map<String, dynamic>> deleteConsultationChat(
-      String patientId, String doctorId) async {
+      String patientId, String doctorPatientId) async {
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.delete(
@@ -145,26 +145,26 @@ class ConsultationChatService {
           },
           body: jsonEncode({
             "patientEntity": {"patientId": patientId},
-            "docPatientEntity": {"patientId": doctorId}
+            "docPatientEntity": {"patientId": doctorPatientId}
           }));
 
       if (response.statusCode == 200) {
         // If the delete operation was successful
         print(
-            'Consultation chat with doctorId: $doctorId and patientId: $patientId deleted successfully');
+            'Consultation chat with doctorId: $doctorPatientId and patientId: $patientId deleted successfully');
         return {
           'success': true,
           'message':
-              'Consultation chat with doctorId: $doctorId and patientId: $patientId deleted successfully'
+              'Consultation chat with doctorId: $doctorPatientId and patientId: $patientId deleted successfully'
         };
       } else {
         // If there was an issue with the delete operation
         print(
-            'Failed to delete consultation chat with doctorId: $doctorId and patientId: $patientId. Status code: ${response.statusCode}');
+            'Failed to delete consultation chat with doctorId: $doctorPatientId and patientId: $patientId. Status code: ${response.statusCode}');
         return {
           'success': false,
           'message':
-              'Failed to delete consultation chat with  doctorId: $doctorId and patientId: $patientId'
+              'Failed to delete consultation chat with  doctorId: $doctorPatientId and patientId: $patientId'
         };
       }
     } catch (e) {

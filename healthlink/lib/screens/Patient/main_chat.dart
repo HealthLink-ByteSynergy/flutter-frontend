@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/consultation_service.dart';
+import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/ConsultationChat.dart';
 import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Medicine.dart';
@@ -38,6 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _botReplied = true; // Flag to track whether the bot has replied
   bool isDoctorButtonVisible = true;
   Patient? patient;
+
+  ConsultationChatService _consultationChatService =
+      new ConsultationChatService();
+  DoctorService _doctorService = new DoctorService();
 
   @override
   void initState() {
@@ -159,11 +167,7 @@ class _ChatScreenState extends State<ChatScreen> {
             visible: true,
             child: TextButton(
               onPressed: () {
-                _showDoctorListDialog();
-
-                // setState(() {
-                //   isDoctorButtonVisible = false;
-                // });
+                _checkExistingChatAndShowDialog();
               },
               child: Container(
                 padding: EdgeInsets.all(8),
@@ -414,18 +418,112 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-// Method to navigate to the chat screen with the selected doctor
-  // void _navigateToChatScreenWithDoctor(String doctorId, String patientId) {
+  void _checkExistingChatAndShowDialog() async {
+    // Call a function in the service class to get consultationChat objects
+    List<ConsultationChat> consultationChats = await _consultationChatService
+        .getConsultationChatByPatientId(widget.patientId);
 
-  //   Navigator.of(context).pushReplacement(
-  //     MaterialPageRoute(
-  //         builder: (context) => ConsultationChatScreen(
-  //               isDoctor: false,
-  //               doctorId: doctorId,
-  //               patientId: patientId,
-  //             )),
-  //   );
-  // }
+    if (consultationChats.isEmpty) {
+      // If the list is empty, call the _showDoctorListDialog function
+      _showDoctorListDialog();
+    } else {
+      // If the list is not empty, display the info about an existing chat
+      ConsultationChat firstChat = consultationChats.first;
+      Doctor? doctorDetails = await _doctorService
+          .getDoctorByPatientId(firstChat.doctor.patientId ?? "N/A");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: color3,
+            title: Text('You already have an existing chat'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text(
+                    // 'Vasistha',
+                    '${doctorDetails?.username ?? "N/A"}',
+                    style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    doctorDetails?.specializations.toString() ?? "N/A",
+                    style: GoogleFonts.raleway(
+                      color: collaborateAppBarBgColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      _navigateToChatScreenWithDoctor(
+                          doctorDetails?.doctorId ?? "N/A",
+                          widget.patientId,
+                          doctorDetails?.docPatientId ?? "N/A");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: color4,
+                    ),
+                    child: Text(
+                      'Join',
+                      style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          bool quitSuccess = true;
+                          // await ServiceClass().quitChat(firstChat.chatId);
+                          if (quitSuccess) {
+                            Navigator.of(context)
+                                .pop(); // Close the current dialog
+                            _showDoctorListDialog(); // Call the main function again
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: Text(
+                          'Quit Chat',
+                          style: GoogleFonts.raleway(color: blackColor),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: TextButton(
+                        style:
+                            TextButton.styleFrom(backgroundColor: blackColor),
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pop(); // Close the current dialog
+                        },
+                        child: Text(
+                          'Close',
+                          style: TextStyle(color: color4),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
 
   void _navigateToChatScreenWithDoctor(
       String doctorId, String patientId, String docPatientId) async {

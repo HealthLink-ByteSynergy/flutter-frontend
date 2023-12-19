@@ -46,8 +46,10 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // print("inside build");
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: color4),
         title: Text(
           'Settings',
           style:
@@ -82,6 +84,7 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
                     doctorDetails!.availability =
                         isAvailable ? "AVAILABLE" : "BUSY";
                   });
+                  print("in update change");
                   _updateDoctorAvailability(doctorDetails!);
                 },
               ),
@@ -131,7 +134,6 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
                 ),
                 subtitle: Text(
                   doctorDetails!.licenseNumber ?? 'Not available',
-                  // Replace '...' with the actual attribute for the license number
                 ),
               ),
               ListView.builder(
@@ -156,15 +158,13 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
               const SizedBox(height: 10.0),
               _buildSubheading('Account Actions'),
               ListTile(
-                title: const Text('Sign Out'),
+                title: const Text('Sign out'),
                 onTap: () {
-                  // Handle the sign-out action
-                  // For example, show a confirmation dialog and sign out on confirmation
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Sign Out'),
+                        title: const Text('Sign out'),
                         content:
                             const Text('Are you sure you want to sign out?'),
                         actions: [
@@ -172,13 +172,19 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text('Cancel'),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: color4),
+                            ),
                           ),
                           TextButton(
                             onPressed: () {
                               signOut(context);
                             },
-                            child: const Text('Sign Out'),
+                            child: const Text(
+                              'Sign out',
+                              style: TextStyle(color: color4),
+                            ),
                           ),
                         ],
                       );
@@ -186,12 +192,8 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
                   );
                 },
               ),
-
-              // Other details...
             ] else
               Center(child: CircularProgressIndicator()),
-
-            // Other widgets...
           ],
         ),
       ),
@@ -201,12 +203,10 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
   void _updateDoctorAvailability(Doctor doctor) {
     final doctorService = DoctorService();
     doctorService.updateDoctor(doctor);
-    // Perform any other necessary actions after updating availability
   }
 
   void signOut(BuildContext context) {
-    // Call the sign-out method from AuthService
-    AuthService().logout(); // Call the sign-out function
+    AuthService().logout();
 
     // Remove all screens and navigate to login
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
@@ -222,15 +222,4 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
       ),
     );
   }
-
-// Future<Doctor?> _fetchDoctorDetails(String doctorId) async {
-//   try {
-//     final doctorService = DoctorService();
-//     // final userId = await AuthService().getUserId();
-//     Future<Doctor?> doctor = doctorService.getDoctorByUserId();
-//     return doctor;
-//   } catch (e) {
-//     throw Exception('Error fetching patient details: $e');
-//   }
-// }
 }

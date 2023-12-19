@@ -99,7 +99,7 @@ class SettingsScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            UserDetailsScreen(user: patientDetails.form!),
+                            UserDetailsScreen(patientId: patientId),
                       ),
                     );
                   },
