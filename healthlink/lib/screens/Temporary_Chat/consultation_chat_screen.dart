@@ -58,6 +58,8 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   Patient? patient;
   Doctor? doctor;
   late Timer _timer;
+  bool isPatientExist = true;
+  bool isDoctorExist = true;
 
   @override
   void initState() {
@@ -75,6 +77,12 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       _fetchChatByDoctorIdAndPatientId();
     });
     _fetchMessages();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void _fetchPatientDetails() async {
@@ -131,11 +139,15 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           .getConsultationChatByDoctorIdAndPatientId(
               widget.doctorPatientId, widget.patientId);
 
+      String displayMessage = widget.isDoctor
+          ? "${patient?.form?.name ?? "patient"} has quit the chat"
+          : "${doctor?.username ?? "doctor"} has quit the chat";
       if (consultationChats.isEmpty) {
-        String displayMessage = widget.isDoctor
-            ? "${patient?.form?.name ?? "patient"} has quit the chat"
-            : "${doctor?.username ?? "doctor"} has quit the chat";
-        showCustomDialog(context, displayMessage);
+        if (isDoctorExist && widget.isDoctor) {
+          showCustomDialog(context, displayMessage);
+        } else if (isPatientExist && !widget.isDoctor) {
+          showCustomDialog(context, displayMessage);
+        }
       }
     } catch (e) {
       print('Error fetching chat: $e');
@@ -152,17 +164,26 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
             TextButton(
               onPressed: () {
                 widget.isDoctor
+                    ? setState(() {
+                        isDoctorExist = false;
+                      })
+                    : setState(() {
+                        isPatientExist = false;
+                      });
+                widget.isDoctor
                     ? Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                DoctorScreen(doctorId: widget.doctorId)),
+                          builder: (context) =>
+                              DoctorScreen(doctorId: widget.doctorId),
+                        ),
                       )
                     : Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                ChatScreen(patientId: widget.patientId)),
+                          builder: (context) =>
+                              ChatScreen(patientId: widget.patientId),
+                        ),
                       );
               },
               child: Text('Home'),
@@ -485,10 +506,21 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       Map<String, dynamic>? deleteMessagesResults = await _messageService
           .deleteMessagesBetweenUsers(widget.patientId, widget.doctorPatientId);
 
+      Map<String, dynamic>? deleteConsultationChatResults =
+          await _consultationChatService.deleteConsultationChat(
+              widget.patientId, widget.doctorPatientId);
+
       //pop the dialog box
       Navigator.of(context).pop();
+      if (widget.isDoctor) {
+        isDoctorExist = false;
+      } else {
+        isPatientExist = false;
+      }
       if (deleteMessagesResults != null &&
-          deleteMessagesResults["data"] == "success") {
+          deleteMessagesResults["data"] == "success" &&
+          deleteConsultationChatResults != null &&
+          deleteConsultationChatResults["data"] == "success") {
         !widget.isDoctor
             ? Navigator.pushReplacement(
                 context,

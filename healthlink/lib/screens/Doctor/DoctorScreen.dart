@@ -62,6 +62,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
     super.initState();
     _fetchDoctorDetails();
     _fetchMessages();
+    _fetchConsultationChats();
 
     _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
       _fetchConsultationChats();
