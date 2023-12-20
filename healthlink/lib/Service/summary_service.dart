@@ -11,21 +11,24 @@ class DetailedSummaryService {
   String prescriptionURL = API.baseURL + API.prescriptionEndpoint;
   String medicineURL = API.baseURL + API.medicineEndpoint;
 
-  void saveSummary(DetailedSummary summary) async {
-    Map<String, dynamic>? medicineIds =
-        await savePrescription(summary.prescription);
+  Future<String> saveSummary(DetailedSummary summary) async {
+    try {
+      Map<String, dynamic>? medicineIds =
+          await savePrescription(summary.prescription);
+      if (medicineIds != null) {
+        String medicineId = medicineIds['medicineId'];
 
-    if (medicineIds != null) {
-      String medicineId = medicineIds['medicineId'];
+        // Iterate through the list of medicines and save each one
+        for (Medicine medicine in summary.prescription.medicines) {
+          await saveMedicine(medicine, medicineId);
+        }
 
-      // Iterate through the list of medicines and save each one
-      for (Medicine medicine in summary.prescription.medicines) {
-        await saveMedicine(medicine, medicineId);
+        await saveSummaryObject(summary);
       }
-
-      await saveSummaryObject(summary);
+      return "success";
+    } catch (e) {
+      return "failure";
     }
-    return;
   }
 
   Future<Map<String, dynamic>?> savePrescription(
@@ -65,7 +68,7 @@ class DetailedSummaryService {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode({
-            'id': " ",
+            'id': "",
             'medicineId': medicineId,
             'name': medicine.name,
             'dosage': medicine.dosage,

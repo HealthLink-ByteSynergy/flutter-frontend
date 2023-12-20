@@ -18,7 +18,7 @@ class Prescription {
   Map<String, dynamic> toJson() {
     return {
       'prescriptionId': '',
-      'genralHabits': generalHabits,
+      'genralHabits': generalHabits ?? 'No general habits mentioned',
       'medicines': ''
     };
   }

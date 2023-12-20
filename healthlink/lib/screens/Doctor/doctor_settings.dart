@@ -164,6 +164,7 @@ class _DoctorSettingsScreenState extends State<DoctorSettingsScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        backgroundColor: collaborateAppBarBgColor,
                         title: const Text('Sign out'),
                         content:
                             const Text('Are you sure you want to sign out?'),

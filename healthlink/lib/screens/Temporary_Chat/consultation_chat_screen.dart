@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/auth_service.dart';
@@ -7,7 +8,9 @@ import 'package:healthlink/Service/consultation_service.dart';
 import 'package:healthlink/Service/doctor_service.dart';
 import 'package:healthlink/Service/message_service.dart';
 import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/Service/summary_service.dart';
 import 'package:healthlink/models/ConsultationChat.dart';
+import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Message.dart';
 import 'package:healthlink/models/Patient.dart';
@@ -52,6 +55,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   final MessageService _messageService = MessageService();
   final ConsultationChatService _consultationChatService =
       ConsultationChatService();
+  final DetailedSummaryService _detailedSummaryService =
+      DetailedSummaryService();
+
   bool _isInputEmpty = true;
   DateTime prevMessageTimestamp = DateTime.now();
   bool _botReplied = true;
@@ -154,44 +160,83 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     }
   }
 
+  updateExistence(bool isDoctor) {
+    if (isDoctor) {
+      isDoctorExist = false;
+    } else {
+      isPatientExist = false;
+    }
+  }
+
   void showCustomDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                widget.isDoctor
-                    ? setState(() {
-                        isDoctorExist = false;
-                      })
-                    : setState(() {
-                        isPatientExist = false;
-                      });
-                widget.isDoctor
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DoctorScreen(doctorId: widget.doctorId),
-                        ),
-                      )
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ChatScreen(patientId: widget.patientId),
-                        ),
-                      );
-              },
-              child: Text('Home'),
-            ),
-          ],
-        );
-      },
-    );
+    Future.delayed(Duration.zero, () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(message),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  updateExistence(widget.isDoctor);
+                  widget.isDoctor
+                      ? Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DoctorScreen(doctorId: widget.doctorId),
+                          ),
+                          (route) => false,
+                        )
+                      : Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChatScreen(patientId: widget.patientId),
+                          ),
+                          (route) => false,
+                        );
+                },
+                child: Text('Home'),
+              ),
+            ],
+          );
+        },
+      );
+    });
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text(message),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           onPressed: () {
+    //             updateExistence(widget.isDoctor);
+    //             widget.isDoctor
+    //                 ? Navigator.pushAndRemoveUntil(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                       builder: (context) =>
+    //                           DoctorScreen(doctorId: widget.doctorId),
+    //                     ),
+    //                     (route) => false,
+    //                   )
+    //                 : Navigator.pushAndRemoveUntil(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                       builder: (context) =>
+    //                           ChatScreen(patientId: widget.patientId),
+    //                     ),
+    //                     (route) => false,
+    //                   );
+    //           },
+    //           child: Text('Home'),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   void _sendMessage(String text) async {
@@ -503,6 +548,28 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     );
 
     try {
+      Doctor dummyDoctor = Doctor(
+          doctorId: widget.doctorId,
+          userId: "",
+          docPatientId: "",
+          specializations: [],
+          availability: "BUSY",
+          phoneNumber: "",
+          licenseNumber: "",
+          email: "",
+          username: "",
+          password: "");
+      Patient dummyPatient = Patient(patientId: widget.doctorId, userId: "");
+      DetailedSummary summary = DetailedSummary(
+          doctor: doctor ?? dummyDoctor,
+          patient: patient ?? dummyPatient,
+          prescription: prescriptionTosave,
+          text: "",
+          timestamp: DateTime.now().toString());
+
+      String saveSummaryResult =
+          await _detailedSummaryService.saveSummary(summary);
+
       Map<String, dynamic>? deleteMessagesResults = await _messageService
           .deleteMessagesBetweenUsers(widget.patientId, widget.doctorPatientId);
 
@@ -510,8 +577,20 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           await _consultationChatService.deleteConsultationChat(
               widget.patientId, widget.doctorPatientId);
 
-      //pop the dialog box
-      Navigator.of(context).pop();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            // Call a function that displays the second dialog box
+            showCustomDialog(context, "Processed Exit Chat");
+            // Return a placeholder widget or the screen you want to display
+            return Container(); // Replace with your screen/widget
+          },
+        ),
+      );
+      // Navigator.of(context).pop();
+      print(deleteMessagesResults);
+      print(deleteConsultationChatResults);
       if (widget.isDoctor) {
         isDoctorExist = false;
       } else {
@@ -519,28 +598,26 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       }
       if (deleteMessagesResults != null &&
           deleteMessagesResults["data"] == "success" &&
-          deleteConsultationChatResults != null &&
-          deleteConsultationChatResults["data"] == "success") {
-        !widget.isDoctor
-            ? Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ChatScreen(patientId: widget.patientId)),
-              )
-            : Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        DoctorScreen(doctorId: widget.doctorId)),
-              );
+          deleteConsultationChatResults['success'] == true) {
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) {
+        //       // Call a function that displays the second dialog box
+        //       showCustomDialog(context, "Processed Exit Chat");
+        //       // Return a placeholder widget or the screen you want to display
+        //       return Container(); // Replace with your screen/widget
+        //     },
+        //   ),
+        // );
+        // showCustomDialog(context, "Processed Exit Chat");
       } else {
         // Handle unsuccessful exit process
-        // Display an error message or take appropriate action
+        // Display an error message
       }
     } catch (e) {
       // Handle exceptions during the exit process
-      // Display an error message or take appropriate action
+      // Display an error message
       print('Error during exit chat: $e');
       Navigator.of(context).pop();
     }
