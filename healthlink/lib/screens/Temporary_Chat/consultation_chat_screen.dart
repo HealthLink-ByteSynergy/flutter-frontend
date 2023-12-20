@@ -44,6 +44,7 @@ class ConsultationChatScreen extends StatefulWidget {
 
 class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   late Prescription prescriptionTosave = Prescription(
+    prescriptionId: "",
     doctorId: this.widget.doctorId, // Default values or empty strings
     patientId: this.widget.patientId,
     medicines: [],

@@ -767,6 +767,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
       List<Medicine> dummyMedicines = [
         Medicine(
+          id: 'Medicine Id $i',
           name: 'Medicine Name $i',
           dosage: 'Dosage $i',
           frequency: 'Frequency $i',
@@ -775,6 +776,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ];
 
       Prescription dummyPrescription = Prescription(
+        prescriptionId: "PrescriptionId$i",
         doctorId: 'DoctorID$i',
         patientId: 'PatientID$i',
         medicines: dummyMedicines,

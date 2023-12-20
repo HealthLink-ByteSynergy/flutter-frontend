@@ -295,6 +295,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 onPressed: () {
                   setState(() {
                     medicines.add(Medicine(
+                      id: '',
                       name: medicineNameController.text,
                       dosage: dosageController.text,
                       frequency: frequencyController.text,
@@ -351,6 +352,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     onPressed: () {
                       // Handle saving prescription
                       Prescription prescription = Prescription(
+                        prescriptionId: "",
                         doctorId:
                             widget.patientId, // Replace with actual doctor ID
                         patientId:

@@ -18,17 +18,24 @@ class DetailedSummaryService {
       if (medicineIds != null) {
         String medicineId = medicineIds['medicineId'];
 
+        String? saveMedicineResult;
+
         // Iterate through the list of medicines and save each one
         for (Medicine medicine in summary.prescription.medicines) {
-          await saveMedicine(medicine, medicineId);
+          saveMedicineResult = await saveMedicine(medicine, medicineId);
         }
 
-        await saveSummaryObject(summary);
+        String? saveSummaryResult = await saveSummaryObject(summary);
+        if (saveSummaryResult != null && saveSummaryResult == "success") {
+          return "success";
+        } else {
+          return "success";
+        }
       }
-      return "success";
     } catch (e) {
-      return "failure";
+      return e.toString();
     }
+    return "failure";
   }
 
   Future<Map<String, dynamic>?> savePrescription(
@@ -46,6 +53,7 @@ class DetailedSummaryService {
       // print(response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        print(jsonResponse);
         result['medicineId'] = jsonResponse['medicineId'];
       } else {
         print('error in prescripition save');
@@ -58,7 +66,7 @@ class DetailedSummaryService {
     return result;
   }
 
-  Future<void> saveMedicine(Medicine medicine, String medicineId) async {
+  Future<String> saveMedicine(Medicine medicine, String medicineId) async {
     // Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
@@ -88,15 +96,14 @@ class DetailedSummaryService {
       print(error);
       // Handle other errors like network issues
     }
-    return;
+    return "";
   }
 
-// Function to save the summary object
-  Future<void> saveSummaryObject(DetailedSummary summary) async {
+  Future<String?> saveSummaryObject(DetailedSummary summary) async {
     // Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
-      final response = await http.post(Uri.parse('$prescriptionURL/save'),
+      final response = await http.post(Uri.parse('$summaryURL/save'),
           headers: <String, String>{
             'Authorization': 'Bearer $jwtToken',
             'Content-Type': 'application/json; charset=UTF-8',
@@ -109,8 +116,13 @@ class DetailedSummaryService {
             'patientEntity': {
               'patientId': summary.patient.patientId,
             },
+            "prescriptionEntity": {
+              "prescriptionId": summary.prescription.prescriptionId,
+              "generalHabits": summary.prescription.generalHabits,
+              "medicineId": summary.prescription.medicines[0].id
+            },
             'text': summary.text,
-            'date': '',
+            'date': DateTime.now().toString(),
           }));
 
       // print(response.body);
@@ -118,15 +130,18 @@ class DetailedSummaryService {
         // print(response.body);
         // final Map<String, dynamic> jsonResponse = json.decode(response.body);
         // result['medicineId'] = jsonResponse['medicineId'];
+        return "success";
       } else {
         print(response.body);
         // print('error in prescripition save');
         // Request failed, store error message in the result map
+        return "failure";
       }
     } catch (error) {
       print(error);
       // print(error);
       // Handle other errors like network issues
+      return error.toString();
     }
   }
 

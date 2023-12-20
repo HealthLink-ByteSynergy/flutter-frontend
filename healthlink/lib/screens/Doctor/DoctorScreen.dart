@@ -355,6 +355,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
 
       List<Medicine> dummyMedicines = [
         Medicine(
+          id: 'Medicine Id $i',
           name: 'Medicine Name $i',
           dosage: 'Dosage $i',
           frequency: 'Frequency $i',
@@ -363,6 +364,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
       ];
 
       Prescription dummyPrescription = Prescription(
+        prescriptionId: "PrescriptionID$i",
         doctorId: 'DoctorID$i',
         patientId: 'PatientID$i',
         medicines: dummyMedicines,
