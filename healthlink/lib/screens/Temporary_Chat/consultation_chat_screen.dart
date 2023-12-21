@@ -22,6 +22,7 @@ import 'package:healthlink/screens/Temporary_Chat/patient_info.dart';
 import 'package:healthlink/screens/Temporary_Chat/prescription_screen.dart';
 import 'package:healthlink/utils/colors.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:url_launcher/link.dart';
 
 class ConsultationChatScreen extends StatefulWidget {
   final bool isDoctor;
@@ -48,7 +49,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     doctorId: this.widget.doctorId, // Default values or empty strings
     patientId: this.widget.patientId,
     medicines: [],
-    generalHabits: '',
+    generalHabits: "",
   );
 
   final TextEditingController _messageController = TextEditingController();
@@ -128,7 +129,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           await _messageService.getMessagesFromUser(
               this.widget.patientId, this.widget.doctorPatientId);
 
-      print("completed");
+      // print("completed");
       if (fetchedMessages != null &&
           fetchedMessages.length != messages.length) {
         setState(() {
@@ -205,42 +206,9 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
         },
       );
     });
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text(message),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           onPressed: () {
-    //             updateExistence(widget.isDoctor);
-    //             widget.isDoctor
-    //                 ? Navigator.pushAndRemoveUntil(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                       builder: (context) =>
-    //                           DoctorScreen(doctorId: widget.doctorId),
-    //                     ),
-    //                     (route) => false,
-    //                   )
-    //                 : Navigator.pushAndRemoveUntil(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                       builder: (context) =>
-    //                           ChatScreen(patientId: widget.patientId),
-    //                     ),
-    //                     (route) => false,
-    //                   );
-    //           },
-    //           child: Text('Home'),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 
-  void _sendMessage(String text) async {
+  void _sendMessage(String text, String type) async {
     String senId = this.widget.isDoctor
         ? this.widget.doctorPatientId ?? 'n/a'
         : this.widget.patientId ?? 'n/a';
@@ -256,7 +224,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
         messageId: "",
         previousMessageId: "",
         receiverId: recId,
-        messageType: "",
+        messageType: type,
         text: text,
         senderId: senId,
         timestamp: DateTime.now().toString(),
@@ -273,11 +241,16 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
     });
 
     try {
-      Map<String, dynamic>? result =
-          await _messageService.saveMessageToUser(newMessage);
+      Map<String, dynamic>? result;
+
+      if (type == "CHAT") {
+        result = await _messageService.saveMessageToUser(newMessage);
+      } else if (type == "MEETING") {
+        result = await _messageService.saveMeeting(newMessage);
+      }
 
       if (result!['data'] == 'success') {
-        print("yes");
+        // print("yes");
         _fetchMessages();
       } else {
         _fetchMessages();
@@ -338,6 +311,15 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                   ? patient!.form!.number ?? '108'
                   : doctor!.phoneNumber ?? '108';
               FlutterPhoneDirectCaller.callNumber(phoneNumber);
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.video_call,
+              color: color4,
+            ),
+            onPressed: () {
+              _sendMessage("", "NOTIFICATION");
             },
           ),
           PopupMenuButton<String>(
@@ -402,20 +384,100 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                   prevMessageTimestamp =
                       DateTime.parse(messages[index - 1].timestamp);
                 }
-                return _buildChatMessage(
-                    message.text,
-                    message.senderId == widget.patientId && !widget.isDoctor ||
-                        widget.isDoctor &&
-                            message.senderId == doctor?.docPatientId,
-                    timestamp,
-                    index == 0,
-                    prevMessageTimestamp);
+                print(message.messageType);
+                if (message.messageType == "NOTIFICATION") {
+                  return _buildMeetingMessage(
+                      message.text,
+                      message.senderId == widget.patientId &&
+                              !widget.isDoctor ||
+                          widget.isDoctor &&
+                              message.senderId == doctor?.docPatientId,
+                      timestamp,
+                      index == 0,
+                      prevMessageTimestamp,
+                      message.senderId == widget.doctorId);
+                } else {
+                  return _buildChatMessage(
+                      message.text,
+                      message.senderId == widget.patientId &&
+                              !widget.isDoctor ||
+                          widget.isDoctor &&
+                              message.senderId == doctor?.docPatientId,
+                      timestamp,
+                      index == 0,
+                      prevMessageTimestamp);
+                }
               },
             ),
           ),
           _buildInputField(),
         ],
       ),
+    );
+  }
+
+  Widget _buildMeetingMessage(String link, bool isDoctor, DateTime messageTime,
+      bool isFirstMessage, DateTime prevMessageTimestamp, bool isInviteDoctor) {
+    bool showDate = false;
+    String invitor = isInviteDoctor
+        ? doctor?.username ?? "doctor"
+        : patient?.form?.name ?? "patient";
+    if (isFirstMessage) {
+      showDate = true;
+    } else {
+      showDate = messageTime.day != prevMessageTimestamp.day ||
+          messageTime.month != prevMessageTimestamp.month ||
+          messageTime.year != prevMessageTimestamp.year;
+    }
+
+    return Column(
+      children: [
+        if (showDate) _buildDateSeparator(messageTime),
+        Align(
+          alignment:
+              isDoctor == true ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
+            constraints: BoxConstraints(
+                maxHeight: 100,
+                maxWidth: MediaQuery.of(context).size.width * 0.75),
+            decoration: BoxDecoration(
+              color: isDoctor == false ? collaborateAppBarBgColor : blackColor,
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$invitor is inviting you to a video call.',
+                  style: GoogleFonts.raleway(
+                      color: color4, fontSize: 15, fontWeight: FontWeight.w500),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Builder(
+                      builder: (context) => Link(
+                        uri: Uri.parse(link),
+                        builder: (context, followLink) => ElevatedButton(
+                          onPressed: followLink,
+                          child: Text(
+                            'Join',
+                            style: GoogleFonts.raleway(
+                                color: blackColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -516,7 +578,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
       onTap: _isInputEmpty || !_botReplied
           ? null
           : () {
-              _sendMessage(_messageController.text);
+              _sendMessage(_messageController.text, 'CHAT');
             },
       child: Container(
         decoration: BoxDecoration(
@@ -561,7 +623,11 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           username: "",
           password: "");
       Patient dummyPatient = Patient(patientId: widget.doctorId, userId: "");
-      DetailedSummary summary = DetailedSummary(
+      if (prescriptionTosave == null) {
+        print("yes");
+      }
+      print(prescriptionTosave.toString());
+      DetailedSummary summaryTostore = DetailedSummary(
           doctor: doctor ?? dummyDoctor,
           patient: patient ?? dummyPatient,
           prescription: prescriptionTosave,
@@ -569,52 +635,60 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           timestamp: DateTime.now().toString());
 
       String saveSummaryResult =
-          await _detailedSummaryService.saveSummary(summary);
+          await _detailedSummaryService.saveSummary(summaryTostore);
 
-      Map<String, dynamic>? deleteMessagesResults = await _messageService
-          .deleteMessagesBetweenUsers(widget.patientId, widget.doctorPatientId);
+      if (saveSummaryResult == "success") {
+        Map<String, dynamic>? deleteMessagesResults =
+            await _messageService.deleteMessagesBetweenUsers(
+                widget.patientId, widget.doctorPatientId);
 
-      Map<String, dynamic>? deleteConsultationChatResults =
-          await _consultationChatService.deleteConsultationChat(
-              widget.patientId, widget.doctorPatientId);
+        Map<String, dynamic>? deleteConsultationChatResults =
+            await _consultationChatService.deleteConsultationChat(
+                widget.patientId, widget.doctorPatientId);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            // Call a function that displays the second dialog box
-            showCustomDialog(context, "Processed Exit Chat");
-            // Return a placeholder widget or the screen you want to display
-            return Container(); // Replace with your screen/widget
-          },
-        ),
-      );
-      // Navigator.of(context).pop();
-      print(deleteMessagesResults);
-      print(deleteConsultationChatResults);
-      if (widget.isDoctor) {
-        isDoctorExist = false;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              // Call a function that displays the second dialog box
+              showCustomDialog(context, "Processed Exit Chat");
+              // Return a placeholder widget or the screen you want to display
+              return Container(); // Replace with your screen/widget
+            },
+          ),
+        );
+
+        // Navigator.of(context).pop();
+        print(deleteMessagesResults);
+        print(deleteConsultationChatResults);
+        if (widget.isDoctor) {
+          isDoctorExist = false;
+        } else {
+          isPatientExist = false;
+        }
+
+        if (deleteMessagesResults != null &&
+            deleteMessagesResults["data"] == "success" &&
+            deleteConsultationChatResults['success'] == true) {
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) {
+          //       // Call a function that displays the second dialog box
+          //       showCustomDialog(context, "Processed Exit Chat");
+          //       // Return a placeholder widget or the screen you want to display
+          //       return Container(); // Replace with your screen/widget
+          //     },
+          //   ),
+          // );
+          // showCustomDialog(context, "Processed Exit Chat");
+        } else {
+          // Handle unsuccessful exit process
+          // Display an error message
+        }
       } else {
-        isPatientExist = false;
-      }
-      if (deleteMessagesResults != null &&
-          deleteMessagesResults["data"] == "success" &&
-          deleteConsultationChatResults['success'] == true) {
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) {
-        //       // Call a function that displays the second dialog box
-        //       showCustomDialog(context, "Processed Exit Chat");
-        //       // Return a placeholder widget or the screen you want to display
-        //       return Container(); // Replace with your screen/widget
-        //     },
-        //   ),
-        // );
-        // showCustomDialog(context, "Processed Exit Chat");
-      } else {
-        // Handle unsuccessful exit process
-        // Display an error message
+        print(saveSummaryResult);
+        Navigator.of(context).pop();
       }
     } catch (e) {
       // Handle exceptions during the exit process

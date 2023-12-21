@@ -88,7 +88,7 @@ class ConsultationChatService {
         },
       );
 
-      print(response.body);
+      // print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         List<ConsultationChat> consultationChats = jsonResponse
@@ -96,7 +96,7 @@ class ConsultationChatService {
             .toList();
         return consultationChats;
       } else {
-        print('why');
+        // print('why');
         throw Exception('Failed to fetch ConsultationChats');
       }
     } catch (e) {
@@ -124,7 +124,7 @@ class ConsultationChatService {
             .toList();
         return consultationChats;
       } else {
-        print('why');
+        // print('why');
         throw Exception('Failed to fetch ConsultationChats');
       }
     } catch (e) {

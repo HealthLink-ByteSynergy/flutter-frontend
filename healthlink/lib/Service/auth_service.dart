@@ -115,16 +115,16 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
       );
 
-      print('doctor signup response');
-      print(response.body);
+      // print('doctor signup response');
+      // print(response.body);
 
       if (response.statusCode == 200) {
         // final Map<String, dynamic> responseData = json.decode(response.body);
         // print(token);
         final token = response.body;
 
-        print('token from doctor signup');
-        print(token);
+        // print('token from doctor signup');
+        // print(token);
         await storeToken(token);
 
         return {'success': true, 'token': token};

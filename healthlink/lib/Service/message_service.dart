@@ -11,7 +11,7 @@ class MessageService {
   String messageURL = API.baseURL + API.messageEndpoint;
 
   Future<Map<String, dynamic>?> saveMessage(Message message) async {
-    print('in save');
+    // print('in save');
     Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
@@ -43,7 +43,7 @@ class MessageService {
   }
 
   Future<Map<String, dynamic>?> saveMessageToUser(Message message) async {
-    print('in save message user');
+    // print('in save message user');
     Map<String, dynamic> result = {};
     try {
       final String? jwtToken = await AuthService().getToken();
@@ -57,7 +57,41 @@ class MessageService {
               // "previousMessageId": message.previousMessageId,
               "senPatientEntity": {"patientId": message.senderId},
               "recPatientEntity": {"patientId": message.receiverId},
-              "text": message.text
+              "text": message.text,
+              "messageType": "CHAT",
+            },
+          ));
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        result['data'] = 'success';
+      } else {
+        // Request failed, store error message in the result map
+      }
+    } catch (error) {
+      print(error);
+    }
+
+    return result;
+  }
+
+  Future<Map<String, dynamic>?> saveMeeting(Message message) async {
+    // print('in save meeting user');
+    Map<String, dynamic> result = {};
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.post(Uri.parse('$messageURL/saveMeetingChat'),
+          headers: <String, String>{
+            'Authorization': 'Bearer $jwtToken',
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(
+            {
+              // "previousMessageId": message.previousMessageId,
+              "senPatientEntity": {"patientId": message.senderId},
+              "recPatientEntity": {"patientId": message.receiverId},
+              "text": message.text,
+              "messageType": "NOTIFICATION",
             },
           ));
 
@@ -108,7 +142,7 @@ class MessageService {
   Future<List<Message>?> getMessagesFromUser(
       String patientId, String doctorId) async {
     List<Message> messages = [];
-    print("entered getMessages");
+    // print("entered getMessages");
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.post(Uri.parse('$messageURL/getAllMessages'),
@@ -124,12 +158,12 @@ class MessageService {
             "recPatientEntity": {"patientId": doctorId}
           }));
 
-      print({
-        "senPatientEntity": {
-          "patientId": patientId,
-        },
-        "recPatientEntity": {"patientId": doctorId}
-      }.toString());
+      // print({
+      //   "senPatientEntity": {
+      //     "patientId": patientId,
+      //   },
+      //   "recPatientEntity": {"patientId": doctorId}
+      // }.toString());
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);

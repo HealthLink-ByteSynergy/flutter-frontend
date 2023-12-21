@@ -4,6 +4,7 @@ import 'package:healthlink/Service/auth_service.dart';
 import 'package:healthlink/models/DetailedSummary.dart';
 import 'package:healthlink/models/Medicine.dart';
 import 'package:healthlink/models/Prescription.dart';
+import 'package:healthlink/models/Summary.dart';
 import 'package:http/http.dart' as http;
 
 class DetailedSummaryService {
@@ -13,10 +14,10 @@ class DetailedSummaryService {
 
   Future<String> saveSummary(DetailedSummary summary) async {
     try {
-      Map<String, dynamic>? medicineIds =
+      Map<String, dynamic>? savePrescriptionResult =
           await savePrescription(summary.prescription);
-      if (medicineIds != null) {
-        String medicineId = medicineIds['medicineId'];
+      if (savePrescriptionResult != null) {
+        String medicineId = savePrescriptionResult['medicineId'];
 
         String? saveMedicineResult;
 
@@ -24,6 +25,13 @@ class DetailedSummaryService {
         for (Medicine medicine in summary.prescription.medicines) {
           saveMedicineResult = await saveMedicine(medicine, medicineId);
         }
+
+        print(summary.toJson());
+        summary.prescription.prescriptionId =
+            savePrescriptionResult['prescriptionId'];
+        print(savePrescriptionResult);
+
+        // print(savePrescriptionResult['prescriptionId']);
 
         String? saveSummaryResult = await saveSummaryObject(summary);
         if (saveSummaryResult != null && saveSummaryResult == "success") {
@@ -33,6 +41,7 @@ class DetailedSummaryService {
         }
       }
     } catch (e) {
+      // print(summary.toString());
       return e.toString();
     }
     return "failure";
@@ -48,19 +57,20 @@ class DetailedSummaryService {
             'Authorization': 'Bearer $jwtToken',
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(prescription.toJson()));
+          body: json.encode({'generalHabits': prescription.generalHabits}));
 
       // print(response.body);
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
         print(jsonResponse);
         result['medicineId'] = jsonResponse['medicineId'];
+        result['prescriptionId'] = jsonResponse['prescriptionId'];
       } else {
         print('error in prescripition save');
         // Request failed, store error message in the result map
       }
     } catch (error) {
-      print(error);
+      print(error.toString());
       // Handle other errors like network issues
     }
     return result;
@@ -68,6 +78,7 @@ class DetailedSummaryService {
 
   Future<String> saveMedicine(Medicine medicine, String medicineId) async {
     // Map<String, dynamic> result = {};
+    print("entered medicine");
     try {
       final String? jwtToken = await AuthService().getToken();
       final response = await http.post(Uri.parse('$medicineURL/save'),
@@ -76,7 +87,7 @@ class DetailedSummaryService {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode({
-            'id': "",
+            // 'id': "",
             'medicineId': medicineId,
             'name': medicine.name,
             'dosage': medicine.dosage,
@@ -109,23 +120,35 @@ class DetailedSummaryService {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode({
-            'summaryId': '',
-            'doctorEntity': {
-              'doctorId': summary.doctor.doctorId,
+            "doctorEntity": {
+              "patientEntity": {"patientId": summary.doctor.docPatientId}
             },
-            'patientEntity': {
-              'patientId': summary.patient.patientId,
-            },
+            "patientEntity": {"patientId": summary.patient.patientId},
             "prescriptionEntity": {
-              "prescriptionId": summary.prescription.prescriptionId,
-              "generalHabits": summary.prescription.generalHabits,
-              "medicineId": summary.prescription.medicines[0].id
-            },
-            'text': summary.text,
-            'date': DateTime.now().toString(),
+              "prescriptionId": summary.prescription.prescriptionId
+            }
           }));
-
-      // print(response.body);
+      print({
+        // 'summaryId': '',
+        'doctorEntity': {
+          'doctorId': summary.doctor.doctorId,
+          'patientEntity': {
+            'patientId': summary.doctor.docPatientId,
+          }
+        },
+        'patientEntity': {
+          'patientId': summary.patient.patientId,
+        },
+        "prescriptionEntity": {
+          "prescriptionId": summary.prescription.prescriptionId,
+          "generalHabits": summary.prescription.generalHabits,
+          "medicineId": summary.prescription.medicines[0].id
+        },
+        // 'text': summary.text,
+        // 'date': DateTime.now().toString(),
+      }.toString());
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         // print(response.body);
         // final Map<String, dynamic> jsonResponse = json.decode(response.body);
@@ -139,6 +162,7 @@ class DetailedSummaryService {
       }
     } catch (error) {
       print(error);
+      print(summary.toString());
       // print(error);
       // Handle other errors like network issues
       return error.toString();
