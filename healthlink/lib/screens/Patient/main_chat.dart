@@ -380,8 +380,8 @@ class _ChatScreenState extends State<ChatScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchScreen(
-                      summaries: generateDummySummaries(), role: 'PATIENT'),
+                  builder: (context) =>
+                      SearchScreen(id: widget.patientId, role: 'PATIENT'),
                 ),
               );
             },
@@ -409,8 +409,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
 
           Flexible(
-            child: SummaryListWidget(
-                summaries: generateDummySummaries(), role: 'PATIENT'),
+            child: SummaryListScreen(id: widget.patientId, role: 'PATIENT'),
           )
           // Add more list items as needed
         ],
@@ -419,11 +418,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _checkExistingChatAndShowDialog() async {
-    // Call a function in the service class to get consultationChat objects
     List<ConsultationChat> consultationChats = await _consultationChatService
         .getConsultationChatByPatientId(widget.patientId);
 
     if (consultationChats.isEmpty) {
+      print("hello");
       // If the list is empty, call the _showDoctorListDialog function
       _showDoctorListDialog();
     } else {
@@ -462,7 +461,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       _navigateToChatScreenWithDoctor(
                           doctorDetails?.doctorId ?? "N/A",
                           widget.patientId,
-                          doctorDetails?.docPatientId ?? "N/A");
+                          doctorDetails?.docPatientId ?? "N/A",
+                          false);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: color4,
@@ -525,13 +525,14 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _navigateToChatScreenWithDoctor(
-      String doctorId, String patientId, String docPatientId) async {
-    // Assuming there's a function in the service class that adds a consultation chat
-    Map<String, dynamic> result = await ConsultationChatService()
-        .saveConsultationChat(docPatientId, patientId);
-
-    if (result['success'] == true) {
+  void _navigateToChatScreenWithDoctor(String doctorId, String patientId,
+      String docPatientId, bool isNewChat) async {
+    Map<String, dynamic> result = {};
+    if (isNewChat) {
+      result = await ConsultationChatService()
+          .saveConsultationChat(docPatientId, patientId);
+    }
+    if (!isNewChat || result['success'] == true) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => ConsultationChatScreen(
@@ -568,12 +569,14 @@ class _ChatScreenState extends State<ChatScreen> {
     String prevMessageId =
         messages.isNotEmpty ? messages[messages.length - 1].messageId : "";
 
+    print(prevMessageId);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return FutureBuilder<List<Doctor>?>(
-          future: MessageService().getDoctors(prevMessageId,
-              this.widget.patientId), // Replace with your service call
+          future:
+              MessageService().getDoctors(prevMessageId, this.widget.patientId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -581,7 +584,7 @@ class _ChatScreenState extends State<ChatScreen> {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (snapshot.hasData && snapshot.data != null) {
               List<Doctor> doctors = snapshot.data!;
-
+              print(doctors);
               if (doctors.isEmpty) {
                 return _buildEmptyDoctorListDialog();
               } else {
@@ -684,7 +687,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   trailing: ElevatedButton(
                     onPressed: () {
                       _navigateToChatScreenWithDoctor(doctor.doctorId,
-                          this.widget.patientId, doctor.docPatientId);
+                          this.widget.patientId, doctor.docPatientId, true);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: color4,
@@ -776,6 +779,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ];
 
       Prescription dummyPrescription = Prescription(
+        medicineId: "MedicineId$i",
         prescriptionId: "PrescriptionId$i",
         doctorId: 'DoctorID$i',
         patientId: 'PatientID$i',

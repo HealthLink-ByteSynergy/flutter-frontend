@@ -6,10 +6,12 @@ class Prescription {
   String prescriptionId;
   String doctorId;
   String patientId;
+  String medicineId;
   List<Medicine> medicines;
   String generalHabits;
 
   Prescription({
+    required this.medicineId,
     required this.prescriptionId,
     required this.doctorId,
     required this.patientId,
@@ -28,11 +30,12 @@ class Prescription {
   factory Prescription.fromJson(Map<String, dynamic> json_pre,
       Map<String, dynamic> json_doc, Map<String, dynamic> json_pat) {
     return Prescription(
-        prescriptionId: json_pre['prescriptionId'],
-        doctorId: json_doc['doctorId'],
-        patientId: json_pat['patientId'],
-        medicines: json_pre['medicineId'],
-        generalHabits: json_pre['generalHabbits']);
+        prescriptionId: json_pre['prescriptionId'] ?? "N/A",
+        doctorId: json_doc['doctorId'] ?? "N/A",
+        patientId: json_pat['patientId'] ?? "N/A",
+        medicineId: json_pre['medicineId'] ?? "N/A",
+        generalHabits: json_pre['generalHabits'] ?? "N/A",
+        medicines: []);
   }
 
   @override

@@ -184,10 +184,10 @@ class DetailedSummaryService {
         },
       );
 
-      // print(response.body);
+      print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        // print(jsonResponse);
+        print(jsonResponse);
         summaries =
             jsonResponse.map((json) => DetailedSummary.fromJson(json)).toList();
 
@@ -196,6 +196,7 @@ class DetailedSummaryService {
         throw Exception('Failed to fetch DetailedSummarys');
       }
     } catch (e) {
+      print(e.toString());
       throw Exception('Error: $e');
     }
   }
@@ -218,10 +219,37 @@ class DetailedSummaryService {
       // print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
-        // print(jsonResponse);
-        // summaries =
-        // jsonResponse.map((json) => DetailedSummary.fromJson(json)).toList();
+        print(jsonResponse);
+        summaries =
+            jsonResponse.map((json) => DetailedSummary.fromJson(json)).toList();
         return summaries;
+      } else {
+        throw Exception('Failed to fetch DetailedSummarys');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<Medicine>?> getMedicinesByMedicineId(String medicineId) async {
+    List<Medicine> medicines = [];
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.get(
+        Uri.parse('$medicineURL/getMedicines/$medicineId'),
+        headers: {
+          'Authorization': 'Bearer $jwtToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = json.decode(response.body);
+        // print(jsonResponse);
+        medicines =
+            jsonResponse.map((json) => Medicine.fromJson(json)).toList();
+        return medicines;
       } else {
         throw Exception('Failed to fetch DetailedSummarys');
       }

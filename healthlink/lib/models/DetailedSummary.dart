@@ -29,12 +29,12 @@ class DetailedSummary {
 
   factory DetailedSummary.fromJson(Map<String, dynamic> json) {
     return DetailedSummary(
-      doctor: Doctor.fromJson(json['doctor']),
-      patient: Patient.fromJson(json['patient']),
-      prescription: Prescription.fromJson(
-          json['prescription'], json['doctor'], json['patient']),
-      text: json['text'],
-      timestamp: json['timestamp'],
+      doctor: Doctor.fromJson(json['doctorEntity']),
+      patient: Patient.fromJson(json['patientEntity']),
+      prescription: Prescription.fromJson(json['prescriptionEntity'],
+          json['doctorEntity'], json['patientEntity']),
+      text: json['text'] ?? "",
+      timestamp: json['date'] ?? DateTime.now().toString(),
     );
   }
 }

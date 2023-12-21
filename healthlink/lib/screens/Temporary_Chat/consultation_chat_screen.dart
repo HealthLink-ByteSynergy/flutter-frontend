@@ -45,6 +45,7 @@ class ConsultationChatScreen extends StatefulWidget {
 
 class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
   late Prescription prescriptionTosave = Prescription(
+    medicineId: "",
     prescriptionId: "",
     doctorId: this.widget.doctorId, // Default values or empty strings
     patientId: this.widget.patientId,
@@ -634,14 +635,49 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
           text: "",
           timestamp: DateTime.now().toString());
 
-      String saveSummaryResult =
-          await _detailedSummaryService.saveSummary(summaryTostore);
+      if (widget.isDoctor) {
+        String saveSummaryResult =
+            await _detailedSummaryService.saveSummary(summaryTostore);
 
-      if (saveSummaryResult == "success") {
-        Map<String, dynamic>? deleteMessagesResults =
-            await _messageService.deleteMessagesBetweenUsers(
-                widget.patientId, widget.doctorPatientId);
+        if (saveSummaryResult == "success") {
+          Map<String, dynamic>? deleteMessagesResults =
+              await _messageService.deleteMessagesBetweenUsers(
+                  widget.patientId, widget.doctorPatientId);
 
+          Map<String, dynamic>? deleteConsultationChatResults =
+              await _consultationChatService.deleteConsultationChat(
+                  widget.patientId, widget.doctorPatientId);
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                // Call a function that displays the second dialog box
+                showCustomDialog(context, "Processed Exit Chat");
+                // Return a placeholder widget or the screen you want to display
+                return Container(); // Replace with your screen/widget
+              },
+            ),
+          );
+
+          // Navigator.of(context).pop();
+          // print(deleteMessagesResults);
+          // print(deleteConsultationChatResults);
+          if (widget.isDoctor) {
+            isDoctorExist = false;
+          } else {
+            isPatientExist = false;
+          }
+
+          if (deleteMessagesResults != null &&
+              deleteMessagesResults["data"] == "success" &&
+              deleteConsultationChatResults['success'] == true) {
+          } else {}
+        } else {
+          print(saveSummaryResult);
+          Navigator.of(context).pop();
+        }
+      } else {
         Map<String, dynamic>? deleteConsultationChatResults =
             await _consultationChatService.deleteConsultationChat(
                 widget.patientId, widget.doctorPatientId);
@@ -657,38 +693,6 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
             },
           ),
         );
-
-        // Navigator.of(context).pop();
-        print(deleteMessagesResults);
-        print(deleteConsultationChatResults);
-        if (widget.isDoctor) {
-          isDoctorExist = false;
-        } else {
-          isPatientExist = false;
-        }
-
-        if (deleteMessagesResults != null &&
-            deleteMessagesResults["data"] == "success" &&
-            deleteConsultationChatResults['success'] == true) {
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) {
-          //       // Call a function that displays the second dialog box
-          //       showCustomDialog(context, "Processed Exit Chat");
-          //       // Return a placeholder widget or the screen you want to display
-          //       return Container(); // Replace with your screen/widget
-          //     },
-          //   ),
-          // );
-          // showCustomDialog(context, "Processed Exit Chat");
-        } else {
-          // Handle unsuccessful exit process
-          // Display an error message
-        }
-      } else {
-        print(saveSummaryResult);
-        Navigator.of(context).pop();
       }
     } catch (e) {
       // Handle exceptions during the exit process

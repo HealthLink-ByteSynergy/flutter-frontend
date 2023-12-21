@@ -352,6 +352,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     onPressed: () {
                       // Handle saving prescription
                       Prescription prescription = Prescription(
+                        medicineId: "",
                         prescriptionId: "",
                         doctorId:
                             widget.patientId, // Replace with actual doctor ID

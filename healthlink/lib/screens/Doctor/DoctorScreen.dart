@@ -157,6 +157,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
 
   Widget _buildPatientCard(Patient patient) {
     return Card(
+      color: collaborateAppBarBgColor,
       margin: EdgeInsets.all(8.0),
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -165,7 +166,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
           children: [
             Text(
               "${patient.form!.name} needs your help!",
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18.0, fontWeight: FontWeight.bold, color: color4),
             ),
             SizedBox(height: 16.0),
             Row(
@@ -184,7 +186,12 @@ class _DoctorScreenState extends State<DoctorScreen> {
                       ),
                     );
                   },
-                  child: Text('Join'),
+                  child: Text(
+                    'Join',
+                    style: GoogleFonts.raleway(
+                        color: collaborateAppBarBgColor,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -196,10 +203,11 @@ class _DoctorScreenState extends State<DoctorScreen> {
                       _fetchConsultationChats();
                     }
                   },
-                  child: Text('Reject'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                  child: Text(
+                    'Reject',
+                    style: TextStyle(color: color4),
                   ),
+                  style: ElevatedButton.styleFrom(backgroundColor: blackColor),
                 ),
               ],
             ),
@@ -276,8 +284,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchScreen(
-                      summaries: generateDummySummaries(), role: 'DOCTOR'),
+                  builder: (context) =>
+                      SearchScreen(id: widget.doctorId, role: 'DOCTOR'),
                 ),
               );
             },
@@ -303,10 +311,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
               ),
             ),
           ),
-
           Flexible(
-            child: SummaryListWidget(
-                summaries: generateDummySummaries(), role: "DOCTOR"),
+            child: SummaryListScreen(id: widget.doctorId, role: "DOCTOR"),
           )
           // Add more list items as needed
         ],
@@ -364,6 +370,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
       ];
 
       Prescription dummyPrescription = Prescription(
+        medicineId: 'Medicine Id $i',
         prescriptionId: "PrescriptionID$i",
         doctorId: 'DoctorID$i',
         patientId: 'PatientID$i',
