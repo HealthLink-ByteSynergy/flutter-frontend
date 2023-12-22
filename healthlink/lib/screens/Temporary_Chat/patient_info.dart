@@ -18,6 +18,7 @@ class PatientDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text(
           'Patient Details',
@@ -58,8 +59,8 @@ class PatientDetailsScreen extends StatelessWidget {
             _buildDetail('Weight', user?.getWeight.toString()),
             _buildDetail('Medical Conditions', user?.getMedicalConditions),
             _buildDetail('Medications', user?.getMedications),
-            _buildDetail('Recent Surgery or Procedure',
-                user?.getRecentSurgeryOrProcedure),
+            // _buildDetail('Recent Surgery or Procedure',
+            //     user?.getRecentSurgeryOrProcedure),
             _buildDetail('Allergies', user?.getAllergies),
             _buildDetail('Smoking Frequency', user?.getSmokingFrequency),
             _buildDetail('Drinking Frequency', user?.getDrinkingFrequency),

@@ -246,7 +246,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
 
       if (type == "CHAT") {
         result = await _messageService.saveMessageToUser(newMessage);
-      } else if (type == "MEETING") {
+      } else if (type == "NOTIFICATION") {
         result = await _messageService.saveMeeting(newMessage);
       }
 
@@ -396,7 +396,7 @@ class _ConsultationChatScreenState extends State<ConsultationChatScreen> {
                       timestamp,
                       index == 0,
                       prevMessageTimestamp,
-                      message.senderId == widget.doctorId);
+                      message.senderId == doctor?.docPatientId);
                 } else {
                   return _buildChatMessage(
                       message.text,

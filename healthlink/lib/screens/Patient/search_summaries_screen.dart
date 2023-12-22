@@ -79,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: color3,
         title: Container(
           decoration: BoxDecoration(
-            color: color2,
+            color: collaborateAppBarBgColor,
             borderRadius: BorderRadius.circular(30),
           ),
           child: TextField(

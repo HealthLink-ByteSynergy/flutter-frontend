@@ -24,7 +24,8 @@ class SummaryListWidget extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-              color: color2, borderRadius: BorderRadius.circular(20.0)),
+              color: collaborateAppBarBgColor,
+              borderRadius: BorderRadius.circular(20.0)),
           child: ListTile(
             title: role == 'PATIENT'
                 ? Text(

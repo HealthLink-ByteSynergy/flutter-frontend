@@ -16,6 +16,7 @@ class DoctorDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text(
           'Doctor Details',
