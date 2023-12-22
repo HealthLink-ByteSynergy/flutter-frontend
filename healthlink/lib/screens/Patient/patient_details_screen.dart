@@ -87,8 +87,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               _buildDetail(
                   'Medical Conditions', patient!.form!.medicalConditions),
               _buildDetail('Medications', patient!.form!.medications),
-              _buildDetail('Recent Surgery or Procedure',
-                  patient!.form!.recentSurgeryOrProcedure),
+              // _buildDetail('Recent Surgery or Procedure',
+              //     patient!.form!.recentSurgeryOrProcedure),
               _buildDetail('Allergies', patient!.form!.allergies),
               _buildDetail(
                   'Smoking Frequency', patient!.form!.smokingFrequency),

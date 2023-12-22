@@ -29,12 +29,12 @@ class SummaryListWidget extends StatelessWidget {
           child: ListTile(
             title: role == 'PATIENT'
                 ? Text(
-                    'Doctor: ${summary.doctor.doctorId}',
+                    'Doctor: ${summary.doctor.username}',
                     style: GoogleFonts.raleway(
                         color: color4, fontWeight: FontWeight.bold),
                   )
                 : Text(
-                    'Patient: ${summary.patient.patientId}',
+                    'Patient: ${summary.patient.form?.name ?? "N/A"}',
                     style: GoogleFonts.raleway(
                         color: color4, fontWeight: FontWeight.bold),
                   ),

@@ -40,7 +40,7 @@ class Doctor {
       licenseNumber: json['licenseNumber'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       email: json['userEntity']['email'] ?? '',
-      username: json['userEntity']['username'] ?? '',
+      username: json['userEntity']['user'] ?? '',
       password: json['userEntity']['password'] ?? '',
     );
   }

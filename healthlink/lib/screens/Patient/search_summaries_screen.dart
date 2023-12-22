@@ -56,18 +56,33 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _filterSummaries(String searchText) {
-    setState(() {
-      filteredSummaries = filteredSummaries
-          .where((summary) =>
-              summary.doctor.doctorId
-                  .toLowerCase()
-                  .contains(searchText.toLowerCase()) ||
-              summary.timestamp
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchText.toLowerCase()))
-          .toList();
-    });
+    if (widget.role == "DOCTOR") {
+      setState(() {
+        filteredSummaries = allSummaries
+            .where((summary) =>
+                summary.patient.form!.name!
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()) ||
+                summary.timestamp
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()))
+            .toList();
+      });
+    } else {
+      setState(() {
+        filteredSummaries = allSummaries
+            .where((summary) =>
+                summary.doctor.username
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()) ||
+                summary.timestamp
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchText.toLowerCase()))
+            .toList();
+      });
+    }
   }
 
   @override
@@ -85,7 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
           child: TextField(
             controller: searchController,
             onChanged: _filterSummaries,
-            style: const TextStyle(color: collaborateAppBarBgColor),
+            style: const TextStyle(color: color2),
             decoration: InputDecoration(
               hintText: 'Search Summaries',
               hintStyle: const TextStyle(
@@ -93,10 +108,9 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.only(left: 30, top: 15),
-              prefixIcon:
-                  const Icon(Icons.search, color: collaborateAppBarBgColor),
+              prefixIcon: const Icon(Icons.search, color: color4),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.clear, color: collaborateAppBarBgColor),
+                icon: const Icon(Icons.clear, color: color4),
                 onPressed: () {
                   searchController.clear();
                   _filterSummaries('');
