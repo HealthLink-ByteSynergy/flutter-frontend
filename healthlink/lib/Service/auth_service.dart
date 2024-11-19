@@ -1,13 +1,13 @@
 import 'dart:convert';
+import 'package:healthlink/APIs.dart';
 import 'package:healthlink/models/Doctor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String baseURL = 'http://10.0.2.2:5000/api/v1';
-  static const String loginURL = '$baseURL/user/login';
-  static const String signupURL = '$baseURL/user/signup';
-  static const String logoutURL = '$baseURL/user/logout';
+  static const String loginURL = '${API.baseURL}/user/login';
+  static const String signupURL = '${API.baseURL}/user/signup';
+  static const String logoutURL = '${API.baseURL}/user/logout';
 
   Future<void> storeToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,13 +40,15 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
+    print('hello');
     try {
       final response = await http.post(
         Uri.parse(loginURL),
         body: jsonEncode({'email': email, 'password': password}),
         headers: {'Content-Type': 'application/json'},
       );
-
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         // final Map<String, dynamic> responseData = json.decode(response.body);
         // final token = responseData['token'];
@@ -54,6 +56,8 @@ class AuthService {
         final token = response.body;
 
         await storeToken(token);
+
+        print(response.body);
 
         return {'success': true, 'token': token};
       } else {
@@ -68,7 +72,7 @@ class AuthService {
       String name, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/v1/user/signup'),
+        Uri.parse(signupURL),
         body: jsonEncode(
             {"username": name, "email": email, "password": password}),
         headers: {'Content-Type': 'application/json'},
@@ -111,16 +115,16 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
       );
 
-      print('doctor signup response');
-      print(response.body);
+      // print('doctor signup response');
+      // print(response.body);
 
       if (response.statusCode == 200) {
         // final Map<String, dynamic> responseData = json.decode(response.body);
         // print(token);
         final token = response.body;
 
-        print('token from doctor signup');
-        print(token);
+        // print('token from doctor signup');
+        // print(token);
         await storeToken(token);
 
         return {'success': true, 'token': token};

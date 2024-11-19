@@ -54,6 +54,7 @@ class _PatientSignupScreenState extends State<PatientSignupScreen> {
         );
       }
     } else {
+      print(res['message']);
       // Show error message if signup fails
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

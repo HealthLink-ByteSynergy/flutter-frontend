@@ -16,6 +16,7 @@ class DoctorDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text(
           'Doctor Details',
@@ -24,7 +25,7 @@ class DoctorDetailsScreen extends StatelessWidget {
       ),
       backgroundColor: color3,
       body: FutureBuilder<Doctor?>(
-        future: doctorService.getDoctorByUserId(),
+        future: doctorService.getDoctorById(doctorId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());

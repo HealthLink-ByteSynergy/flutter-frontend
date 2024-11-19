@@ -1,6 +1,7 @@
 class Doctor {
   String doctorId;
   String userId;
+  String docPatientId;
   List specializations;
   String availability;
   String licenseNumber;
@@ -12,6 +13,7 @@ class Doctor {
   Doctor(
       {required this.doctorId,
       required this.userId,
+      required this.docPatientId,
       required this.specializations,
       required this.availability,
       required this.phoneNumber,
@@ -31,22 +33,16 @@ class Doctor {
     return Doctor(
       doctorId: json['doctorId'] ?? '',
       userId: json['userEntity']['id'] ?? '',
-      specializations: ['j'],
+      specializations: json['specialization'].split(','),
+      docPatientId: json["patientEntity"]["patientId"],
       // convertCommaSeparatedStringToList(json['specialization']),
       availability: json['isAvailable'] ?? '',
       licenseNumber: json['licenseNumber'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       email: json['userEntity']['email'] ?? '',
-      username: json['userEntity']['username'] ?? '',
+      username: json['userEntity']['user'] ?? '',
       password: json['userEntity']['password'] ?? '',
     );
-  }
-
-  List<String> convertCommaSeparatedStringToList(String jsonString) {
-    // Split the string by commas and convert it into a list
-    List<String> values = jsonString.split(',');
-
-    return values;
   }
 
   Map<String, dynamic> toJson() {
@@ -55,13 +51,14 @@ class Doctor {
       'userEntity': {
         'id': userId,
       },
+      'patientEntity': {'patientId': docPatientId},
       'specialization': specializations,
       'isAvailable': availability,
       'licenseNumber': licenseNumber,
       'phoneNumber': phoneNumber,
       'email': email,
       'username': username,
-      'password': password,
+      'password': password
     };
   }
 }

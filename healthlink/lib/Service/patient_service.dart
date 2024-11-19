@@ -6,7 +6,8 @@ import 'package:healthlink/models/patient_details.dart';
 import 'package:http/http.dart' as http;
 
 class PatientService {
-  String patientURL = 'http://10.0.2.2:5000/api/v1/patient';
+  String patientURL = API.baseURL + API.patientEndpoint;
+  String deletePatientUrl = API.baseURL + API.patientEndpoint + "/delete";
 
   Future<Map<String, dynamic>> updatePatient(Patient patient) async {
     Map<String, dynamic> result = {};
@@ -119,5 +120,40 @@ class PatientService {
     }
   }
 
-  Future<void> deletePatient(String id) async {}
+  Future<Map<String, dynamic>> deletePatient(String id) async {
+    try {
+      final String? jwtToken = await AuthService().getToken();
+      final response = await http.delete(
+        Uri.parse('$deletePatientUrl/$id'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $jwtToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // If the delete operation was successful
+        print('Patient with ID: $id deleted successfully');
+        return {
+          'success': true,
+          'message': 'Patient with ID $id deleted successfully'
+        };
+      } else {
+        // If there was an issue with the delete operation
+        print(
+            'Failed to delete patient with ID: $id. Status code: ${response.statusCode}');
+        return {
+          'success': false,
+          'message': 'Failed to delete patient with ID: $id'
+        };
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the API call
+      print('Exception during delete operation: $e');
+      return {
+        'success': false,
+        'message': 'Exception occurred during delete operation'
+      };
+    }
+  }
 }

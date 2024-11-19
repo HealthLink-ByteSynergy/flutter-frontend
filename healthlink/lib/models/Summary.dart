@@ -1,3 +1,5 @@
+import 'package:healthlink/models/Prescription.dart';
+
 class Summary {
   String summaryId;
   String patientId;

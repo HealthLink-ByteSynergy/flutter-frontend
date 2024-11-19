@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthlink/Service/doctor_service.dart';
+import 'package:healthlink/Service/patient_service.dart';
+import 'package:healthlink/models/Doctor.dart';
 import 'package:healthlink/models/Medicine.dart';
+import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/Prescription.dart';
 import 'package:healthlink/utils/colors.dart';
 
@@ -24,6 +28,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
   TextEditingController dosageController = TextEditingController();
   TextEditingController frequencyController = TextEditingController();
   TextEditingController habitsController = TextEditingController();
+  Patient? patient;
+  Doctor? doctor;
 
   List<Medicine> medicines = [];
 
@@ -31,6 +37,38 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
   void initState() {
     super.initState();
     initFields();
+    _fetchPatientDetails();
+    _fetchDoctorDetails();
+  }
+
+  void _fetchPatientDetails() async {
+    try {
+      // String? userId = await AuthService().getUserId();
+      Patient? fetchedPatient =
+          await PatientService().getPatientById(this.widget.patientId);
+
+      if (fetchedPatient != null) {
+        setState(() {
+          patient = fetchedPatient;
+        });
+      }
+    } catch (e) {
+      print('Error fetching doctor details: $e');
+    }
+  }
+
+  void _fetchDoctorDetails() async {
+    try {
+      final doctorService = DoctorService();
+      // final userId = await AuthService().getUserId();
+      Doctor? doctorRecieved =
+          await doctorService.getDoctorById(this.widget.doctorId);
+      if (doctorRecieved != null) {
+        doctor = doctorRecieved;
+      }
+    } catch (e) {
+      throw Exception('Error fetching patient details: $e');
+    }
   }
 
   void initFields() {
@@ -89,13 +127,13 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Doctor: DoctorName', // Replace with doctor's name
+                'Doctor: ${doctor?.username ?? "N/A"}',
                 style: GoogleFonts.raleway(
                     fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10.0),
               Text(
-                'Patient: PatientName', // Replace with patient's name
+                'Patient: ${patient?.form!.name ?? "N/A"}',
                 style: GoogleFonts.raleway(
                     fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
@@ -190,7 +228,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                       ),
                     )
                   : Text("You have not added any medicines"),
-              SizedBox(height: 30.0),
+              SizedBox(height: 50.0),
               Container(
                   child: Column(
                 children: [
@@ -257,6 +295,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 onPressed: () {
                   setState(() {
                     medicines.add(Medicine(
+                      id: '',
                       name: medicineNameController.text,
                       dosage: dosageController.text,
                       frequency: frequencyController.text,
@@ -266,11 +305,14 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     frequencyController.clear();
                   });
                 },
-                child: Text('Add'),
+                child: Text(
+                  'Add',
+                  style: GoogleFonts.raleway(color: color4),
+                ),
               ),
               SizedBox(height: 50.0),
               Text(
-                'General Habits or Instructions:',
+                'General Habits or Instructions',
                 style: GoogleFonts.raleway(
                     fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
@@ -291,21 +333,27 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 mainAxisAlignment: MainAxisAlignment
                     .spaceEvenly, // Adjust the alignment as needed
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle cancel action
-                      Navigator.pop(
-                          context); // Close the dialog without returning any data
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            blackColor), // Change the color as needed
-                    child: Text('Cancel'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     // Handle cancel action
+                  //     Navigator.pop(
+                  //         context); // Close the dialog without returning any data
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //       backgroundColor:
+                  //           blackColor), // Change the color as needed
+                  //   child: Text(
+                  //     'Cancel',
+                  //     style: GoogleFonts.raleway(
+                  //         color: color4, fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
                   ElevatedButton(
                     onPressed: () {
                       // Handle saving prescription
                       Prescription prescription = Prescription(
+                        medicineId: "",
+                        prescriptionId: "",
                         doctorId:
                             widget.patientId, // Replace with actual doctor ID
                         patientId:
@@ -319,7 +367,11 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     },
                     style:
                         ElevatedButton.styleFrom(backgroundColor: blackColor),
-                    child: Text('Save'),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.raleway(
+                          color: color4, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),

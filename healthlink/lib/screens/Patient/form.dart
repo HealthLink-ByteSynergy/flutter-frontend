@@ -10,8 +10,14 @@ import 'package:healthlink/utils/widgets/custom_text_field.dart';
 
 class MedicalInfoForm extends StatefulWidget {
   CustomForm customForm;
+  String userId;
+  bool isNewPatient;
 
-  MedicalInfoForm({super.key, required this.customForm});
+  MedicalInfoForm(
+      {super.key,
+      required this.customForm,
+      required this.userId,
+      required this.isNewPatient});
 
   @override
   _MedicalInfoFormState createState() => _MedicalInfoFormState();
@@ -603,7 +609,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                     style:
                         ElevatedButton.styleFrom(backgroundColor: blackColor),
                     onPressed: () {
-                      customForm.reset();
+                      // customForm.reset();
                       Navigator.pop(context);
                     }, // Submit button
                     child: Text('Cancel',
@@ -617,7 +623,7 @@ class _MedicalInfoFormState extends State<MedicalInfoForm> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: orange),
-                    onPressed: _createChat, // Submit button
+                    onPressed: _createChat,
                     child: Text('Submit',
                         style: GoogleFonts.raleway(
                             color: blackColor,

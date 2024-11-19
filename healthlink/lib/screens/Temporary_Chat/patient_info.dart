@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthlink/Service/patient_service.dart';
 import 'package:healthlink/models/Patient.dart';
 import 'package:healthlink/models/patient_details.dart';
-import 'package:healthlink/screens/form.dart';
+import 'package:healthlink/screens/Patient/form.dart';
 import 'package:healthlink/utils/colors.dart';
 
 class PatientDetailsScreen extends StatelessWidget {
@@ -18,6 +18,7 @@ class PatientDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: collaborateAppBarBgColor,
         title: Text(
           'Patient Details',
@@ -58,8 +59,8 @@ class PatientDetailsScreen extends StatelessWidget {
             _buildDetail('Weight', user?.getWeight.toString()),
             _buildDetail('Medical Conditions', user?.getMedicalConditions),
             _buildDetail('Medications', user?.getMedications),
-            _buildDetail('Recent Surgery or Procedure',
-                user?.getRecentSurgeryOrProcedure),
+            // _buildDetail('Recent Surgery or Procedure',
+            //     user?.getRecentSurgeryOrProcedure),
             _buildDetail('Allergies', user?.getAllergies),
             _buildDetail('Smoking Frequency', user?.getSmokingFrequency),
             _buildDetail('Drinking Frequency', user?.getDrinkingFrequency),
